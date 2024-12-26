@@ -27,10 +27,27 @@ mcp.serve();
 
 ### Resources
 
+The handler registered for a given path will be called with the parameters from the path.
+
+If you need to access underlying resources like files or databases, you can use the `resource` method.
+
 ```typescript
-mcp.resource("protocol://path-to-resource", params, async (context) => {
-  return "Hello, world!";
+mcp.resource("file://:fileName/:id", async ({ fileName, id }, ctx) => {
+  return {
+    contents: [
+      {
+        uri: "whatever",
+        type: "text",
+        text: `File: ${fileName} with ID: ${id}`,
+      },
+    ],
+  };
 });
+```
+
+### Tools
+
+
 
 ```
 

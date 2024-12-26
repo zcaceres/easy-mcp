@@ -2,7 +2,10 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import type {
   MCPResourceRequestParams,
   ResourceOptions,
+  ResourceRequestFn,
   ServerOptions,
+  ToolOptions,
+  ToolRequestFn,
 } from "../types";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import ResourceManager, {
@@ -11,21 +14,26 @@ import ResourceManager, {
 } from "./ResourceManager";
 import {
   ListResourcesRequestSchema,
+  ListToolsRequestSchema,
   ReadResourceRequestSchema,
+  type ListToolsResult,
   type ReadResourceRequest,
   type ReadResourceResult,
 } from "@modelcontextprotocol/sdk/types.js";
+import ToolManager from "./ToolManager";
 
 class EasyMCP {
   name: string;
   opts: ServerOptions;
   resourceManager: ResourceManager;
+  toolManager: ToolManager;
   server: Server;
 
   private constructor(name: string, opts: ServerOptions) {
     this.name = name;
     this.opts = opts;
     this.resourceManager = ResourceManager.create();
+    this.toolManager = ToolManager.create();
     this.server = new Server(
       {
         name: this.name,
@@ -58,11 +66,11 @@ class EasyMCP {
     }
   }
 
-  resource(
-    uri: string,
-    fn: (params: MCPResourceRequestParams) => Promise<any>,
-    opts: ResourceOptions = {},
-  ) {
+  tool(fn: ToolRequestFn, name: string, opts: ToolOptions) {
+    return this.toolManager.add(name, fn, opts);
+  }
+
+  resource(uri: string, fn: ResourceRequestFn, opts: ResourceOptions = {}) {
     return this.resourceManager.add(
       {
         uri,
@@ -99,6 +107,14 @@ class EasyMCP {
       },
     );
     console.log("Registered ReadResource endpoint");
+
+    // Tools
+    this.server.setRequestHandler(
+      ListToolsRequestSchema,
+      async (): Promise<ListToolsResult> => {
+        return { tools: this.toolManager.list() };
+      },
+    );
   }
 
   static create(name: string, opts: ServerOptions) {
