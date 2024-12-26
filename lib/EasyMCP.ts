@@ -1,11 +1,19 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import type { ServerOptions } from "../types";
+import type {
+  MCPResourceRequestParams,
+  ResourceOptions,
+  ServerOptions,
+} from "../types";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import ResourceManager from "./ResourceManager";
+import ResourceManager, {
+  ResourceError,
+  ResourceNotFoundError,
+} from "./ResourceManager";
 import {
   ListResourcesRequestSchema,
   ReadResourceRequestSchema,
   type ReadResourceRequest,
+  type ReadResourceResult,
 } from "@modelcontextprotocol/sdk/types.js";
 
 class EasyMCP {
@@ -50,29 +58,50 @@ class EasyMCP {
     }
   }
 
+  resource(
+    uri: string,
+    fn: (params: MCPResourceRequestParams) => Promise<any>,
+    opts: ResourceOptions = {},
+  ) {
+    return this.resourceManager.add(
+      {
+        uri,
+        name: opts.name ? opts.name : uri,
+        description: opts?.description,
+        mimeType: opts?.mimeType,
+      },
+      fn,
+    );
+  }
+
   private async registerCoreHandlers() {
+    // Resources
     this.server.setRequestHandler(ListResourcesRequestSchema, async () => {
-      return {
-        resources: this.resourceManager.list(),
-      };
+      return { resources: this.resourceManager.list() };
     });
     console.log("Registered ListResources endpoint");
 
     this.server.setRequestHandler(
       ReadResourceRequestSchema,
       async (request: ReadResourceRequest) => {
-        const resource = this.resourceManager.get(request.params.uri);
-        if (resource) {
-          return { contents: [resource] };
-        } else {
-          throw new Error("Resource not found");
+        try {
+          const resourceResult = await this.resourceManager.get(
+            request.params.uri,
+          );
+          // ReadResourceResult is basically an any
+          return resourceResult as ReadResourceResult;
+        } catch (e) {
+          if (e instanceof ResourceNotFoundError) {
+            return { error: e.message };
+          }
+          throw new ResourceError((e as unknown as Error).message);
         }
       },
     );
     console.log("Registered ReadResource endpoint");
   }
 
-  static async create(name: string, opts: ServerOptions) {
+  static create(name: string, opts: ServerOptions) {
     return new EasyMCP(name, opts);
   }
 }

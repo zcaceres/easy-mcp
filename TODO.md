@@ -1,6 +1,8 @@
 ## TODO
 
 
+I think he does the decorator pattern by injecting the managers into the server and registering the elements that the decorate (in the PY library refer to) with the manager...
+
 ```
 Server Class
   Managers
@@ -8,10 +10,13 @@ Server Class
     Tool Manager
     Prompt Managers
   Core Handlers
-    list resource
+    - [X] list resource
       fulfilled by the resource manager
-    read resource
+    - [X] read resource
       fulfilled by the resource manager
+    - [] add
+    - [] sub
+    - [] unsub
     list tools
       fulfilled by the tool manager
     call tools
@@ -28,13 +33,10 @@ Server Class
 - [] Declare the capabilities of the server in the constructor
 
 
-
-
-
 ### Capabilities
-- [] Resources
-  - [] List
-  - [] Read
+- [X] Resources
+  - [X] List
+  - [X] Read
 - [] Prompts
 - [] Tools
 - [] Context Object

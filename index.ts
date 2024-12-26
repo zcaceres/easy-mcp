@@ -1,7 +1,12 @@
 import EasyMCP from "./lib/EasyMCP";
 
-EasyMCP.create("test-mcp", {
+const mcp = EasyMCP.create("test-mcp", {
   version: "0.1.0",
-})
-  .then((mcp) => mcp.serve())
-  .catch(console.error);
+});
+
+mcp.resource("file://:fileName/:id", async (params) => {
+  const { fileName, id } = params;
+  return "Hello, world!";
+});
+
+await mcp.serve().catch(console.error);
