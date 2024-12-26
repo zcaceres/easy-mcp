@@ -1,8 +1,11 @@
 ## TODO
 
+1. Resources is kind of broken because we are mixing Resource Templates with pure resources and the pattern matching via url.
+2. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
 
-I think he does the decorator pattern by injecting the managers into the server and registering the elements that the decorate (in the PY library refer to) with the manager...
-
+START AT:
+- Running a tool with input from the caller
+- Then figure out Resources
 
 
 

@@ -26,7 +26,7 @@ export type ResourceRequestContext = {
   getResource: (uri: string) => Promise<any>;
 };
 
-export type ToolRequestFn = (params: any) => Promise<any>;
+export type ToolRequestFn = (params?: any) => Promise<any>;
 
 export type ToolOptions = Pick<Tool, "inputSchema" | "description">;
 

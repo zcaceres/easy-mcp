@@ -1,5 +1,6 @@
 import { type Resource } from "@modelcontextprotocol/sdk/types.js";
-import type { EasyMCPResource } from "../types";
+import type { EasyMCPResource, ResourceRequestFn } from "../types";
+import URI from "./URI";
 
 export class ResourceError extends Error {}
 
@@ -17,7 +18,10 @@ export class ResourceConverter {
     };
   }
 
-  static toMCPResource(resource: Resource, fn: Function): EasyMCPResource {
+  static toMCPResource(
+    resource: Resource,
+    fn: ResourceRequestFn,
+  ): EasyMCPResource {
     return {
       uri: resource.uri,
       name: resource.name,
@@ -34,10 +38,16 @@ export default class ResourceManager {
     this.resources = {};
   }
 
-  add(resource: Resource, fn: Function) {
+  add(resource: Resource, fn: ResourceRequestFn) {
+    const paramParser = URI.generateParamParserFromURI(resource.uri);
+    const params = URI.parseParamsFromURI(resource.uri, paramParser);
+
+    const wrappedFn = () =>
+      fn(params, { uri: resource.uri, getResource: this.get.bind(this) });
+
     this.resources[resource.uri] = ResourceConverter.toMCPResource(
       resource,
-      fn,
+      wrappedFn,
     );
   }
 
@@ -48,7 +58,10 @@ export default class ResourceManager {
       throw new ResourceNotFoundError();
     }
 
-    const result = await foundResource.fn();
+    const paramParser = URI.generateParamParserFromURI(uri);
+    const params = URI.parseParamsFromURI(uri, paramParser);
+
+    const result = await foundResource.fn({ ...params });
 
     return result;
   }

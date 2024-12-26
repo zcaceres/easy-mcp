@@ -13,6 +13,7 @@ import ResourceManager, {
   ResourceNotFoundError,
 } from "./ResourceManager";
 import {
+  CallToolRequestSchema,
   ListResourcesRequestSchema,
   ListToolsRequestSchema,
   ReadResourceRequestSchema,
@@ -66,8 +67,20 @@ class EasyMCP {
     }
   }
 
-  tool(fn: ToolRequestFn, name: string, opts: ToolOptions) {
-    return this.toolManager.add(name, fn, opts);
+  tool(name: string, fn: ToolRequestFn, opts: Partial<ToolOptions>) {
+    if (!opts.inputSchema) {
+      return this.toolManager.add(name, fn, {
+        inputSchema: {
+          type: "object",
+          properties: {},
+        },
+        description: opts.description ?? "",
+      });
+    }
+    return this.toolManager.add(name, fn, {
+      inputSchema: opts.inputSchema,
+      description: opts.description ?? "",
+    });
   }
 
   resource(uri: string, fn: ResourceRequestFn, opts: ResourceOptions = {}) {
@@ -115,6 +128,18 @@ class EasyMCP {
         return { tools: this.toolManager.list() };
       },
     );
+
+    this.server.setRequestHandler(CallToolRequestSchema, async ({ params }) => {
+      const result = await this.toolManager.call(params.name);
+      return {
+        content: [
+          {
+            type: "text",
+            text: result,
+          },
+        ],
+      };
+    });
   }
 
   static create(name: string, opts: ServerOptions) {

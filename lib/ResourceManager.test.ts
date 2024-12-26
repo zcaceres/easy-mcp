@@ -1,20 +1,11 @@
 import { test, expect, beforeEach, describe } from "bun:test";
-import { faker } from "@faker-js/faker";
 import ResourceManager, {
   ResourceNotFoundError,
   ResourceConverter,
 } from "./ResourceManager";
 import type { Resource } from "@modelcontextprotocol/sdk/types.js";
 import type { EasyMCPResource } from "../types";
-
-export function createMockResource(): Resource {
-  return {
-    uri: faker.internet.url(),
-    name: faker.lorem.word(),
-    description: faker.lorem.sentence(),
-    mimeType: faker.system.mimeType(),
-  };
-}
+import { createMockResource } from "./mocks";
 
 describe("ResourceManager", () => {
   let resourceManager: ResourceManager;

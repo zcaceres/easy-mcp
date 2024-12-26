@@ -15,8 +15,8 @@ export default class URI {
   }
 
   static parseParamsFromURI(uri: string, matcher: ReturnType<typeof match>) {
-    // @ts-expect-error Seems matcher does inferr correctly because params do exist!
-    const { params, path } = matcher(this.removeProtocol(uri));
-    return params;
+    // @ts-expect-error Seems matcher does infer correctly because params do exist!
+    const { params, _path } = matcher(this.removeProtocol(uri));
+    return params as Record<string, string>;
   }
 }
