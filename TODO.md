@@ -3,13 +3,16 @@
 
 I think he does the decorator pattern by injecting the managers into the server and registering the elements that the decorate (in the PY library refer to) with the manager...
 
+
+
+
 ```
 Server Class
   Managers
     - [X] Resource Manager
     Tool Manager
     Prompt Managers
-  Core Handlers
+    Core Handlers
     - [X] list resource
       fulfilled by the resource manager
     - [X] read resource
@@ -25,7 +28,6 @@ Server Class
       fulfilled by the prompt manager
     get prompt
       fulfilled by the prompt manager
-
 ```
 
 ### Server Concepts

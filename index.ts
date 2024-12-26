@@ -9,4 +9,6 @@ mcp.resource("file://:fileName/:id", async (params) => {
   return "Hello, world!";
 });
 
+// GET file://test.txt/123 <-- this should work
+
 await mcp.serve().catch(console.error);
