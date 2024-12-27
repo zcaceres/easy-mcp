@@ -6,16 +6,19 @@ const mcp = EasyMCP.create("test-mcp", {
 
 mcp.resource({
   uri: "dir://desktop",
-  name: "Desktop",
-  description: "The desktop",
-  mimeType: "text/plain",
+  name: "An optional name",
+  description: "An optional description",
+  mimeType: "text/plain", // optional
   fn: async () => {
     return "file://desktop/file1.txt";
   },
 });
 
 mcp.template({
-  uriTemplate: "file://{filename}",
+  uriTemplate: "file://{parameter1}/{parameter2}",
+  name: "An optional name",
+  description: "An optional description",
+  mimeType: "text/plain", // Optional
   fn: async ({ filename }) => {
     return `file://${filename}/file1.txt`;
   },
@@ -25,10 +28,10 @@ mcp.tool({
   name: "hello world",
   inputs: [
     {
-      name: "name",
+      name: "optionalInput",
       type: "string",
-      description: "Your name",
-      required: true,
+      description: "an optional input",
+      required: false,
     },
   ],
   fn: async ({ name }) => {
