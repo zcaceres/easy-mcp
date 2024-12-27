@@ -1,6 +1,14 @@
-import { type Resource } from "@modelcontextprotocol/sdk/types.js";
-import type { EasyMCPResource, ResourceRequestFn } from "../types";
+import {
+  type ReadResourceResult,
+  type Resource,
+} from "@modelcontextprotocol/sdk/types.js";
+import type {
+  ResourceConfig,
+  ResourceDefinition,
+  ResourceRequestFn,
+} from "../types";
 import URI from "./URI";
+import MCPResource from "./MCPResource";
 
 export class ResourceError extends Error {}
 
@@ -9,49 +17,34 @@ export class ResourceNotFoundError extends ResourceError {
 }
 
 export class ResourceConverter {
-  static fromMCPResource(resource: EasyMCPResource): Resource {
-    return {
-      uri: resource.uri,
-      name: resource.name,
-      description: resource.description,
-      mimeType: resource.mimeType,
-    };
-  }
-
-  static toMCPResource(
-    resource: Resource,
-    fn: ResourceRequestFn,
-  ): EasyMCPResource {
-    return {
-      uri: resource.uri,
-      name: resource.name,
-      description: resource.description,
-      mimeType: resource.mimeType,
-      fn,
-    };
+  static toSerializableResource(resource: MCPResource): ResourceDefinition {
+    return resource.definition;
   }
 }
 
 export default class ResourceManager {
-  private resources: Record<string, EasyMCPResource>;
+  private resources: Record<string, MCPResource>;
   private constructor() {
     this.resources = {};
   }
 
-  add(resource: Resource, fn: ResourceRequestFn) {
-    const paramParser = URI.generateParamParserFromURI(resource.uri);
-    const params = URI.parseParamsFromURI(resource.uri, paramParser);
+  add(config: ResourceConfig) {
+    const resource = MCPResource.create({
+      uri: config.uri,
+      name: config.name,
+      description: config.description,
+      fn: config.fn,
+    });
+    // const paramParser = URI.generateParamParserFromURI(uri);
+    // const params = URI.parseParamsFromURI(uri, paramParser);
 
-    const wrappedFn = () =>
-      fn(params, { uri: resource.uri, getResource: this.get.bind(this) });
+    // const wrappedFn = () =>
+    //   fn(params, { uri, getResource: this.get.bind(this) });
 
-    this.resources[resource.uri] = ResourceConverter.toMCPResource(
-      resource,
-      wrappedFn,
-    );
+    this.resources[config.uri] = resource;
   }
 
-  async get(uri: string) {
+  async get(uri: string): Promise<ReadResourceResult> {
     const foundResource = this.resources[uri];
 
     if (!foundResource) {
@@ -61,13 +54,25 @@ export default class ResourceManager {
     const paramParser = URI.generateParamParserFromURI(uri);
     const params = URI.parseParamsFromURI(uri, paramParser);
 
-    const result = await foundResource.fn({ ...params });
+    const result = await foundResource.callFn({ ...params });
 
-    return result;
+    // @TODO conversion to expected result types here
+
+    return {
+      contents: [
+        {
+          uri: uri,
+          mimeType: foundResource.definition.mimeType,
+          text: result,
+        },
+      ],
+    };
   }
 
   list() {
-    return Object.values(this.resources);
+    return Object.values(this.resources).map(
+      ResourceConverter.toSerializableResource,
+    );
   }
 
   static create() {

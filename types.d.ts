@@ -8,10 +8,6 @@ export type ServerOptions = {
   version: `${number}.${number}.${number}`;
 };
 
-export type EasyMCPResource = Resource & {
-  fn: ResourceRequestFn;
-};
-
 export type MCPResourceRequestParams = Record<string, string>;
 
 export type ResourceOptions = Partial<{
@@ -93,4 +89,18 @@ export type PromptConfig = {
   description: string;
   args: PromptArgument[];
   fn: FullfillmentFn;
+};
+
+// Resources
+export type ResourceConfig = Partial<ResourceDefinition> & {
+  uri: string;
+  fn: ResourceFn;
+};
+
+export type ResourceDefinition = {
+  uri: string;
+  name: string;
+  description: string;
+  args: ResourceArg[];
+  mimeType: string;
 };

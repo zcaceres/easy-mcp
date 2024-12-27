@@ -5,22 +5,26 @@ const mcp = EasyMCP.create("test-mcp", {
   version: "0.1.0",
 });
 
-// mcp.resource(
-//   "file://:fileName/:id",
-//   async ({ fileName, id }, ctx: ResourceRequestContext) => {
-//     // const resource = ctx.getResource(`file://${fileName}`);
-//     return {
-//       contents: [
-//         {
-//           uri: "whatever",
-//           type: "text",
-//           text: `File: ${fileName} with ID: ${id}`,
-//         },
-//       ],
-//     };
-//   },
+mcp.resource({
+  uri: "dir://desktop",
+  fn: async () => {
+    return "file://desktop/file1.txt";
+  },
+});
+
+// async ({ fileName, id }, ctx: ResourceRequestContext) => {
+//   // const resource = ctx.getResource(`file://${fileName}`);
+//   return {
+//     contents: [
+//       {
+//         uri: "whatever",
+//         type: "text",
+//         text: `File: ${fileName} with ID: ${id}`,
+//       },
+//     ],
+//   };
+// },
 // );
-//
 
 mcp.tool({
   name: "hello world",

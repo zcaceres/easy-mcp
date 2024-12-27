@@ -1,12 +1,9 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import type {
   PromptConfig,
-  ResourceOptions,
   ResourceRequestFn,
   ServerOptions,
   ToolConfig,
-  ToolOptions,
-  ToolRequestFn,
 } from "../types";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import ResourceManager, {
@@ -20,7 +17,10 @@ import {
   ListResourcesRequestSchema,
   ListToolsRequestSchema,
   ReadResourceRequestSchema,
+  type CallToolResult,
+  type GetPromptResult,
   type ListPromptsResult,
+  type ListResourcesResult,
   type ListToolsResult,
   type ReadResourceRequest,
   type ReadResourceResult,
@@ -86,16 +86,11 @@ class EasyMCP {
     return this.toolManager.add(tool);
   }
 
-  resource(uri: string, fn: ResourceRequestFn, opts: ResourceOptions = {}) {
-    return this.resourceManager.add(
-      {
-        uri,
-        name: opts.name ? opts.name : uri,
-        description: opts?.description,
-        mimeType: opts?.mimeType,
-      },
+  resource({ uri, fn }: { uri: string; fn: ResourceRequestFn }) {
+    return this.resourceManager.add({
+      uri,
       fn,
-    );
+    });
   }
 
   prompt(config: PromptConfig) {
@@ -110,23 +105,33 @@ class EasyMCP {
 
   private async registerCoreHandlers() {
     // Resources
-    this.server.setRequestHandler(ListResourcesRequestSchema, async () => {
-      return { resources: this.resourceManager.list() };
-    });
+    this.server.setRequestHandler(
+      ListResourcesRequestSchema,
+      async (): Promise<ListResourcesResult> => {
+        return { resources: this.resourceManager.list() };
+      },
+    );
     console.log("Registered ListResources endpoint");
 
     this.server.setRequestHandler(
       ReadResourceRequestSchema,
-      async (request: ReadResourceRequest) => {
+      async (request: ReadResourceRequest): Promise<ReadResourceResult> => {
         try {
           const resourceResult = await this.resourceManager.get(
             request.params.uri,
           );
-          // ReadResourceResult is basically an any
-          return resourceResult as ReadResourceResult;
+          return resourceResult;
         } catch (e) {
           if (e instanceof ResourceNotFoundError) {
-            return { error: e.message };
+            return {
+              contents: [
+                {
+                  uri: request.params.uri,
+                  mimeType: "text/plain",
+                  text: "Resource not found",
+                },
+              ],
+            };
           }
           throw new ResourceError((e as unknown as Error).message);
         }
@@ -143,17 +148,23 @@ class EasyMCP {
     );
     console.log("Registered ListTools endpoint");
 
-    this.server.setRequestHandler(CallToolRequestSchema, async ({ params }) => {
-      const result = await this.toolManager.call(params.name, params.arguments);
-      return {
-        content: [
-          {
-            type: "text",
-            text: result,
-          },
-        ],
-      };
-    });
+    this.server.setRequestHandler(
+      CallToolRequestSchema,
+      async ({ params }): Promise<CallToolResult> => {
+        const result = await this.toolManager.call(
+          params.name,
+          params.arguments,
+        );
+        return {
+          content: [
+            {
+              type: "text",
+              text: result,
+            },
+          ],
+        };
+      },
+    );
     console.log("Registered CallTool endpoint");
 
     // Prompts
@@ -167,7 +178,7 @@ class EasyMCP {
 
     this.server.setRequestHandler(
       GetPromptRequestSchema,
-      async ({ params }) => {
+      async ({ params }): Promise<GetPromptResult> => {
         const result = await this.promptManager.call(
           params.name,
           params.arguments,

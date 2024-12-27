@@ -3,10 +3,6 @@
 1. Resources is kind of broken because we are mixing Resource Templates with pure resources and the pattern matching via url.
 2. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
 
-START AT:
-- [X] Better abstraction for tool declaration
-
-
 - Then figure out Resources
 
 
@@ -29,8 +25,8 @@ Server Class
     - [X] read tool
     - [X] add tool
     - [X] call tool
-    - [] list prompts
-    - [] get prompt
+    - [X] list prompts
+    - [X] get prompt
 ```
 
 ### Server Concepts
@@ -40,8 +36,8 @@ Server Class
 
 ### Capabilities
 - [X] Tools
+- [X] Prompts
 - [] Resources
-- [] Prompts
 - [] Context Object
    - [] Progress bar reporting through report_progress()
    - [] Logging via debug(), info(), warning(), and error()
@@ -54,7 +50,8 @@ Server Class
 - [] Instant install to Claude by script
 
 ### Test Coverage
-- [] Tests on each major capability
+- [X] Tests on each major capability
+- [] Test with Claude Desktop
 
 ### Example Servers
 - [] Weather
