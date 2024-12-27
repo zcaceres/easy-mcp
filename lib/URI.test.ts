@@ -1,92 +1,108 @@
-import { test, expect, describe } from "bun:test";
-import URI from "./URI";
+import { expect, test, describe } from "bun:test";
+import URI from "../lib/URI";
+import type { ResourceTemplateCache } from "../types";
 
 describe("URI", () => {
-  describe("matchUri", () => {
-    test("should create a matcher for a simple URI", () => {
-      const matcher = URI.generateParamParserFromURI("/users/:id");
-      expect(typeof matcher).toBe("function");
+  describe("createUrlMatcher", () => {
+    test("should create a matcher for a file protocol URL", () => {
+      const matcher = URI.createUrlMatcher("file://{param1}/{param2}");
+      expect(matcher).toHaveProperty("regex");
+      expect(matcher).toHaveProperty("keys");
+      expect(matcher.keys).toHaveLength(2);
     });
 
-    test("should throw an error for invalid URI patterns", () => {
-      expect(() => URI.generateParamParserFromURI("invalid[pattern")).toThrow();
-    });
-
-    test("should create a matcher for a complex URI", () => {
-      const matcher = URI.generateParamParserFromURI(
-        "file://users/:id/posts/:postId",
+    test("should create a matcher for a custom protocol URL", () => {
+      const matcher = URI.createUrlMatcher(
+        "my-custom-protocol://somepath/{param3}",
       );
-      expect(typeof matcher).toBe("function");
-    });
-  });
-
-  describe("parseParams", () => {
-    test("should parse parameters from a file protocol URI", () => {
-      const matcher = URI.generateParamParserFromURI(
-        "file://:folder/:filename",
-      );
-      const result = URI.parseParamsFromURI(
-        "file://documents/report.pdf",
-        matcher,
-      );
-      expect(result).toEqual({
-        folder: "documents",
-        filename: "report.pdf",
-      });
-    });
-
-    test("should parse parameters from a custom protocol URI", () => {
-      const matcher = URI.generateParamParserFromURI(
-        "my-custom-protocol://resource/:resourceName",
-      );
-      const result = URI.parseParamsFromURI(
-        "my-custom-protocol://resource/user-data",
-        matcher,
-      );
-      expect(result).toEqual({
-        resourceName: "user-data",
-      });
-    });
-
-    test("should parse multiple parameters from a complex URI", () => {
-      const matcher = URI.generateParamParserFromURI(
-        "api://:version/users/:userId/posts/:postId",
-      );
-      const result = URI.parseParamsFromURI(
-        "api://v1/users/123/posts/456",
-        matcher,
-      );
-      expect(result).toEqual({
-        version: "v1",
-        userId: "123",
-        postId: "456",
-      });
-    });
-
-    test("should handle URIs with special characters", () => {
-      const matcher = URI.generateParamParserFromURI("file://:path/:file.:ext");
-      const result = URI.parseParamsFromURI(
-        "file://my-folder/my-file.txt",
-        matcher,
-      );
-      expect(result).toEqual({
-        path: "my-folder",
-        file: "my-file",
-        ext: "txt",
-      });
+      expect(matcher).toHaveProperty("regex");
+      expect(matcher).toHaveProperty("keys");
+      expect(matcher.keys).toHaveLength(1);
     });
   });
 
-  describe("error handling", () => {
-    test("should propagate errors from matchUri", () => {
-      expect(() => URI.generateParamParserFromURI("invalid[pattern")).toThrow();
+  describe("matchUrl", () => {
+    test("should match a file protocol URL", () => {
+      const matcher = URI.createUrlMatcher("file://{param1}/{param2}");
+      const result = URI.matchUrl("file://desktop/user.txt", matcher);
+      expect(result).toEqual({ param1: "desktop", param2: "user.txt" });
     });
 
-    test("should not throw errors for valid but non-matching URIs", () => {
-      const matcher = URI.generateParamParserFromURI("protocol://:param");
-      expect(() =>
-        URI.parseParamsFromURI("different://value", matcher),
-      ).not.toThrow();
+    test("should match a custom protocol URL", () => {
+      const matcher = URI.createUrlMatcher(
+        "my-custom-protocol://somepath/{param3}",
+      );
+      const result = URI.matchUrl(
+        "my-custom-protocol://somepath/12345",
+        matcher,
+      );
+      expect(result).toEqual({ param3: "12345" });
+    });
+
+    test("should return null for non-matching URL", () => {
+      const matcher = URI.createUrlMatcher("file://{param1}/{param2}");
+      const result = URI.matchUrl("http://example.com", matcher);
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("extractParamsFromURI", () => {
+    const mockTemplate = {
+      definition: {
+        uriTemplate: "file://{param1}/{param2}",
+      },
+    };
+
+    test("should extract parameters from a matching URI", () => {
+      const result = URI.extractParamsFromURI(
+        "file://desktop/user.txt",
+        mockTemplate,
+      );
+      expect(result).toEqual({ param1: "desktop", param2: "user.txt" });
+    });
+
+    test("should return null for a non-matching URI", () => {
+      const result = URI.extractParamsFromURI(
+        "http://example.com",
+        mockTemplate,
+      );
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("findMatchingTemplate", () => {
+    const mockTemplates: ResourceTemplateCache = {
+      "file://{param1}/{param2}": {
+        definition: {
+          uriTemplate: "file://{param1}/{param2}",
+        },
+      },
+      "custom://{param3}": {
+        definition: {
+          uriTemplate: "custom://{param3}",
+        },
+      },
+    };
+
+    test("should return the matching template for a valid URI", () => {
+      const result = URI.findMatchingTemplate(
+        "file://desktop/user.txt",
+        mockTemplates,
+      );
+      expect(result).toEqual(mockTemplates["file://{param1}/{param2}"]);
+    });
+
+    test("should return the matching template for another valid URI", () => {
+      const result = URI.findMatchingTemplate("custom://12345", mockTemplates);
+      expect(result).toEqual(mockTemplates["custom://{param3}"]);
+    });
+
+    test("should return undefined for a non-matching URI", () => {
+      const result = URI.findMatchingTemplate(
+        "http://example.com",
+        mockTemplates,
+      );
+      expect(result).toBeUndefined();
     });
   });
 });

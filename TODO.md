@@ -1,9 +1,11 @@
 ## TODO
 
-1. Resources is kind of broken because we are mixing Resource Templates with pure resources and the pattern matching via url.
-2. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
+1. Need to be able to make a resource from a template via handlebars.
 
-- Then figure out Resources
+2. Possibly need to make a separate in memory map for templates?
+
+3. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
+
 
 
 

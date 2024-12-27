@@ -1,7 +1,9 @@
 import { type ReadResourceResult } from "@modelcontextprotocol/sdk/types.js";
 import type {
+  ResourceCache,
   ResourceConfig,
   ResourceDefinition,
+  ResourceTemplateCache,
   ResourceTemplateConfig,
   ResourceTemplateDefinition,
 } from "../types";
@@ -28,9 +30,12 @@ export class ResourceConverter {
 }
 
 export default class ResourceManager {
-  private resources: Record<string, MCPResource | MCPResourceTemplate>;
+  private resources: ResourceCache;
+  private templates: ResourceTemplateCache;
+
   private constructor() {
     this.resources = {};
+    this.templates = {};
   }
 
   addResource(config: ResourceConfig) {
@@ -51,46 +56,58 @@ export default class ResourceManager {
       name: config.name,
       mimeType: config.mimeType,
       description: config.description,
+      fn: config.fn,
     });
-    this.resources[config.uriTemplate] = resourceTemplate;
+    this.templates[config.uriTemplate] = resourceTemplate;
   }
 
-  private isResourceTemplate(
-    resourceOrTemplate: MCPResource | MCPResourceTemplate,
+  private createResourceFromTemplate(
+    uri: string,
+    template: MCPResourceTemplate,
   ) {
-    return resourceOrTemplate instanceof MCPResourceTemplate;
+    const params = URI.extractParamsFromURI(uri, template);
+
+    // We cache the call as a resource. This seems desirable for performance reasons since we always try to get a resource directly at first.
+    this.addResource({
+      uri: uri,
+      name: uri,
+      description: template.definition.description,
+      mimeType: template.definition.mimeType,
+      // Wrap the template function with the params implied by the call to the template uri
+      fn: async () => template.fn(params),
+    });
+
+    return this.get(uri);
   }
 
   async get(uri: string): Promise<ReadResourceResult> {
     const foundResource = this.resources[uri];
-
-    if (!foundResource) {
-      throw new ResourceNotFoundError();
+    if (foundResource) {
+      const result = await foundResource.callFn();
+      return {
+        contents: [
+          {
+            uri: uri,
+            mimeType: foundResource.definition.mimeType,
+            text: result,
+          },
+        ],
+      };
     }
-
-    if (this.isResourceTemplate(foundResource)) {
-      throw new Error("NOT IMPLEMENTED");
-    }
-    const paramParser = URI.generateParamParserFromURI(uri);
-    const params = URI.parseParamsFromURI(uri, paramParser);
-
-    const result = await foundResource.callFn({ ...params });
 
     // @TODO conversion to expected result types here
 
-    return {
-      contents: [
-        {
-          uri: uri,
-          mimeType: foundResource.definition.mimeType,
-          text: result,
-        },
-      ],
-    };
+    const foundTemplate = URI.findMatchingTemplate(uri, this.templates);
+
+    if (foundTemplate) {
+      return this.createResourceFromTemplate(uri, foundTemplate);
+    }
+
+    throw new ResourceNotFoundError();
   }
 
   listTemplates() {
-    return Object.values(this.resources)
+    return Object.values(this.templates)
       .filter((r) => r instanceof MCPResourceTemplate)
       .map(ResourceConverter.toSerializableResourceTemplate);
   }

@@ -1,23 +1,27 @@
 import type {
+  FulfillmentFn,
   ResourceTemplateConfig,
   ResourceTemplateDefinition,
 } from "../types";
 
 class MCPResourceTemplate {
   private _definition: ResourceTemplateDefinition;
+  fn: FulfillmentFn;
 
   constructor({
     uriTemplate,
     name,
     description,
     mimeType,
+    fn,
   }: ResourceTemplateConfig) {
     this._definition = {
       uriTemplate,
       name: name || uriTemplate,
       description: description || uriTemplate,
-      mimeType: mimeType || "text/plain",
+      mimeType: mimeType || ("text/plain" as const),
     };
+    this.fn = fn;
   }
 
   get definition() {
@@ -34,6 +38,9 @@ class MCPResourceTemplate {
       name: "mockedResourceTemplate",
       description: "A mocked resource template",
       mimeType: "text/plain",
+      fn: async ({ filename, id }) => {
+        return `file://${filename}/${id}/file1.txt`;
+      },
     });
   }
 }

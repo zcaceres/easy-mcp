@@ -10,19 +10,11 @@ class MCPResource {
   private _definition: ResourceDefinition;
   private fn: FulfillmentFn;
 
-  constructor({
-    uri,
-    name,
-    description,
-    args = [],
-    mimeType,
-    fn,
-  }: ResourceConfig) {
+  constructor({ uri, name, description, mimeType, fn }: ResourceConfig) {
     this._definition = {
       uri: uri,
       name: name || uri,
       description: description || uri,
-      args: args,
       mimeType: mimeType || "text/plain",
     };
     this.fn = fn;
@@ -46,7 +38,6 @@ class MCPResource {
       uri: faker.internet.url(),
       name: faker.lorem.word(),
       description: faker.lorem.sentence(),
-      args: [],
       mimeType: faker.system.mimeType() as MimeTypes,
       fn: async () => "mocked result",
     };

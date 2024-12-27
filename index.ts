@@ -16,6 +16,9 @@ mcp.resource({
 
 mcp.template({
   uriTemplate: "file://{filename}",
+  fn: async ({ filename }) => {
+    return `file://${filename}/file1.txt`;
+  },
 });
 
 mcp.tool({

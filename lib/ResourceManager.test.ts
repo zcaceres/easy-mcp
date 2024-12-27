@@ -37,6 +37,7 @@ describe("ResourceManager", () => {
       name: "Test Template",
       mimeType: "text/plain" as const,
       description: "A test template",
+      fn: async (params: any) => `Content for ${params.filename}`,
     };
     resourceManager.addTemplate(mockTemplate);
     const listedTemplates = resourceManager.listTemplates();
@@ -68,23 +69,37 @@ describe("ResourceManager", () => {
   });
 
   test("get() should throw ResourceNotFoundError for non-existent URI", async () => {
-    expect(resourceManager.get("non-existent-uri")).rejects.toThrow(
+    await expect(resourceManager.get("non-existent-uri")).rejects.toThrow(
       ResourceNotFoundError,
     );
   });
 
-  test("get() should throw an error for resource templates", async () => {
+  test("get() should create a resource from a template and return the result", async () => {
     const mockTemplate = {
       uriTemplate: "file://{filename}",
       name: "Test Template",
       mimeType: "text/plain" as const,
       description: "A test template",
+      fn: async (params: any) => `Content for ${params.filename}`,
     };
     resourceManager.addTemplate(mockTemplate);
 
-    expect(resourceManager.get(mockTemplate.uriTemplate)).rejects.toThrow(
-      "NOT IMPLEMENTED",
-    );
+    const result = await resourceManager.get("file://example.txt");
+
+    expect(result).toEqual({
+      contents: [
+        {
+          uri: "file://example.txt",
+          mimeType: "text/plain",
+          text: "Content for example.txt",
+        },
+      ],
+    });
+
+    // Check if the resource was cached
+    const listedResources = resourceManager.listResources();
+    expect(listedResources).toHaveLength(1);
+    expect(listedResources[0].uri).toBe("file://example.txt");
   });
 
   test("listResources() should return all added resources", () => {
@@ -102,13 +117,6 @@ describe("ResourceManager", () => {
         mimeType: "text/plain" as const,
         description: "Test 2",
         fn: async () => "2",
-      },
-      {
-        uri: "file://test3.txt",
-        name: "Test 3",
-        mimeType: "text/plain" as const,
-        description: "Test 3",
-        fn: async () => "3",
       },
     ];
 
@@ -128,12 +136,14 @@ describe("ResourceManager", () => {
         name: "Template 1",
         mimeType: "text/plain" as const,
         description: "Template 1",
+        fn: async (params: any) => `Content for ${params.filename1}`,
       },
       {
         uriTemplate: "file://{filename2}",
         name: "Template 2",
         mimeType: "text/plain" as const,
         description: "Template 2",
+        fn: async (params: any) => `Content for ${params.filename2}`,
       },
     ];
 
@@ -170,8 +180,7 @@ describe("ResourceConverter", () => {
       uri: "file://test.txt",
       name: "Test Resource",
       description: "A test resource",
-      args: [],
-      mimeType: "text/plain" as const,
+      mimeType: "text/plain",
     });
     expect(result).not.toHaveProperty("fn");
   });
@@ -182,6 +191,7 @@ describe("ResourceConverter", () => {
       name: "Test Template",
       description: "A test template",
       mimeType: "text/plain" as const,
+      fn: async (params) => `Content for ${params.filename}`,
     });
 
     const result =
@@ -190,7 +200,8 @@ describe("ResourceConverter", () => {
       uriTemplate: "file://{filename}",
       name: "Test Template",
       description: "A test template",
-      mimeType: "text/plain" as const,
+      mimeType: "text/plain",
     });
+    expect(result).not.toHaveProperty("fn");
   });
 });

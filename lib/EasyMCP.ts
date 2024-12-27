@@ -97,6 +97,7 @@ class EasyMCP {
       name: config.name,
       description: config.description,
       mimeType: config.mimeType,
+      fn: config.fn,
     });
   }
 

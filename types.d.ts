@@ -67,16 +67,31 @@ export type PromptConfig = {
 // Resources
 export type ResourceConfig = Partial<ResourceDefinition> & {
   uri: string;
-  fn: ResourceFn;
+  fn: FulfillmentFn;
 };
 
 export type ResourceDefinition = {
   uri: string;
   name: string;
   description: string;
-  args: ResourceArg[];
   mimeType: MimeTypes;
 };
+
+export type ResourceTemplateDefinition = {
+  uriTemplate: string;
+  name: string;
+  description: string;
+  mimeType: MimeTypes;
+};
+
+export type ResourceTemplateConfig = Partial<ResourceTemplateDefinition> & {
+  uriTemplate: string;
+  fn: FulfillmentFn;
+};
+
+export type ResourceCache = Record<string, MCPResource>;
+
+export type ResourceTemplateCache = Record<string, MCPResourceTemplate>;
 
 export type MimeTypes =
   | "audio/aac"
@@ -101,11 +116,13 @@ export type MimeTypes =
   | "image/vnd.microsoft.icon"
   | "text/calendar"
   | "application/java-archive"
-  | ".jpg"
+  | "image/jpg"
+  | "image/jpeg"
   | "text/javascript"
+  | "application/javascript"
   | "application/json"
   | "application/ld+json"
-  | ".midi"
+  | "audio/midi"
   | "audio/mpeg"
   | "video/mpeg"
   | "application/vnd.apple.installer+xml"
@@ -142,20 +159,10 @@ export type MimeTypes =
   | "application/xhtml+xml"
   | "application/vnd.ms-excel"
   | "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-  | "XML"
+  | "application/xml"
+  | "text/xml"
   | "application/vnd.mozilla.xul+xml"
   | "application/zip"
   | "video/3gpp"
   | "video/3gpp2"
   | "application/x-7z-compressed";
-
-export type ResourceTemplateDefinition = {
-  uriTemplate: string;
-  name: string;
-  description: string;
-  mimeType: MimeTypes;
-};
-
-export type ResourceTemplateConfig = Partial<ResourceTemplateDefinition> & {
-  uriTemplate: string;
-};
