@@ -4,6 +4,7 @@ import ResourceManager, {
   ResourceConverter,
 } from "./ResourceManager";
 import MCPResource from "./MCPResource";
+import MCPResourceTemplate from "./MCPResourceTemplate";
 
 describe("ResourceManager", () => {
   let resourceManager: ResourceManager;
@@ -16,10 +17,13 @@ describe("ResourceManager", () => {
     expect(resourceManager).toBeInstanceOf(ResourceManager);
   });
 
-  test("add() should add a resource", () => {
+  test("addResource() should add a resource", () => {
     const mockResource = {
       uri: "file://test.txt",
-      fn: async () => ({ content: "Mock content" }),
+      name: "Test Resource",
+      mimeType: "text/plain" as const,
+      description: "A test resource",
+      fn: async () => "Mock content",
     };
     resourceManager.addResource(mockResource);
     const listedResources = resourceManager.listResources();
@@ -27,33 +31,40 @@ describe("ResourceManager", () => {
     expect(listedResources[0].uri).toBe(mockResource.uri);
   });
 
-  test.skip("get() should return the result of calling the resource function", async () => {
-    const mockResource1Config = MCPResource.mocked();
-    const mockResource2Config = MCPResource.mocked();
-    resourceManager.addResource(mockResource1Config);
-    resourceManager.addResource(mockResource2Config);
+  test("addTemplate() should add a resource template", () => {
+    const mockTemplate = {
+      uriTemplate: "file://{filename}",
+      name: "Test Template",
+      mimeType: "text/plain" as const,
+      description: "A test template",
+    };
+    resourceManager.addTemplate(mockTemplate);
+    const listedTemplates = resourceManager.listTemplates();
+    expect(listedTemplates).toHaveLength(1);
+    expect(listedTemplates[0].uriTemplate).toBe(mockTemplate.uriTemplate);
+  });
 
-    const result1 = await resourceManager.get(mockResource1Config.uri);
-    const result2 = await resourceManager.get(mockResource2Config.uri);
+  test("get() should return the result of calling the resource function", async () => {
+    const mockResource = {
+      uri: "file://test.txt",
+      name: "Test Resource",
+      mimeType: "text/plain" as const,
+      description: "A test resource",
+      fn: async () => "Mock content",
+    };
+    resourceManager.addResource(mockResource);
 
-    // expect(result1).toEqual({
-    //   contents: [
-    //     {
-    //       uri: mockResource1Config.uri,
-    //       mimeType: mockResource1Config.mimeType,
-    //       text: result1.contents[0].text,
-    //     },
-    //   ],
-    // });
-    // expect(result2).toEqual({
-    //   contents: [
-    //     {
-    //       uri: mockResource2Config.uri,
-    //       mimeType: mockResource2Config.mimeType,
-    //       blob: result2.contents[0].,
-    //     },
-    //   ],
-    // });
+    const result = await resourceManager.get(mockResource.uri);
+
+    expect(result).toEqual({
+      contents: [
+        {
+          uri: mockResource.uri,
+          mimeType: mockResource.mimeType,
+          text: "Mock content",
+        },
+      ],
+    });
   });
 
   test("get() should throw ResourceNotFoundError for non-existent URI", async () => {
@@ -62,11 +73,43 @@ describe("ResourceManager", () => {
     );
   });
 
-  test("list() should return all added resources", () => {
+  test("get() should throw an error for resource templates", async () => {
+    const mockTemplate = {
+      uriTemplate: "file://{filename}",
+      name: "Test Template",
+      mimeType: "text/plain" as const,
+      description: "A test template",
+    };
+    resourceManager.addTemplate(mockTemplate);
+
+    expect(resourceManager.get(mockTemplate.uriTemplate)).rejects.toThrow(
+      "NOT IMPLEMENTED",
+    );
+  });
+
+  test("listResources() should return all added resources", () => {
     const mockResources = [
-      { uri: "file://test1.txt", fn: async () => ({}) },
-      { uri: "file://test2.txt", fn: async () => ({}) },
-      { uri: "file://test3.txt", fn: async () => ({}) },
+      {
+        uri: "file://test1.txt",
+        name: "Test 1",
+        mimeType: "text/plain" as const,
+        description: "Test 1",
+        fn: async () => "1",
+      },
+      {
+        uri: "file://test2.txt",
+        name: "Test 2",
+        mimeType: "text/plain" as const,
+        description: "Test 2",
+        fn: async () => "2",
+      },
+      {
+        uri: "file://test3.txt",
+        name: "Test 3",
+        mimeType: "text/plain" as const,
+        description: "Test 3",
+        fn: async () => "3",
+      },
     ];
 
     mockResources.forEach((resource) => resourceManager.addResource(resource));
@@ -78,8 +121,37 @@ describe("ResourceManager", () => {
     );
   });
 
-  test("list() should return an empty array when no resources are added", () => {
+  test("listTemplates() should return all added resource templates", () => {
+    const mockTemplates = [
+      {
+        uriTemplate: "file://{filename1}",
+        name: "Template 1",
+        mimeType: "text/plain" as const,
+        description: "Template 1",
+      },
+      {
+        uriTemplate: "file://{filename2}",
+        name: "Template 2",
+        mimeType: "text/plain" as const,
+        description: "Template 2",
+      },
+    ];
+
+    mockTemplates.forEach((template) => resourceManager.addTemplate(template));
+
+    const listedTemplates = resourceManager.listTemplates();
+    expect(listedTemplates).toHaveLength(mockTemplates.length);
+    expect(listedTemplates.map((t) => t.uriTemplate)).toEqual(
+      expect.arrayContaining(mockTemplates.map((t) => t.uriTemplate)),
+    );
+  });
+
+  test("listResources() should return an empty array when no resources are added", () => {
     expect(resourceManager.listResources()).toEqual([]);
+  });
+
+  test("listTemplates() should return an empty array when no templates are added", () => {
+    expect(resourceManager.listTemplates()).toEqual([]);
   });
 });
 
@@ -89,7 +161,8 @@ describe("ResourceConverter", () => {
       uri: "file://test.txt",
       name: "Test Resource",
       description: "A test resource",
-      fn: async () => ({}),
+      mimeType: "text/plain" as const,
+      fn: async () => "test",
     });
 
     const result = ResourceConverter.toSerializableResource(mcpResource);
@@ -98,8 +171,26 @@ describe("ResourceConverter", () => {
       name: "Test Resource",
       description: "A test resource",
       args: [],
-      mimeType: "text/plain",
+      mimeType: "text/plain" as const,
     });
     expect(result).not.toHaveProperty("fn");
+  });
+
+  test("toSerializableResourceTemplate should convert MCPResourceTemplate to ResourceTemplateDefinition", () => {
+    const mcpResourceTemplate = MCPResourceTemplate.create({
+      uriTemplate: "file://{filename}",
+      name: "Test Template",
+      description: "A test template",
+      mimeType: "text/plain" as const,
+    });
+
+    const result =
+      ResourceConverter.toSerializableResourceTemplate(mcpResourceTemplate);
+    expect(result).toEqual({
+      uriTemplate: "file://{filename}",
+      name: "Test Template",
+      description: "A test template",
+      mimeType: "text/plain" as const,
+    });
   });
 });

@@ -41,11 +41,6 @@ export default class ResourceManager {
       description: config.description,
       fn: config.fn,
     });
-    // const paramParser = URI.generateParamParserFromURI(uri);
-    // const params = URI.parseParamsFromURI(uri, paramParser);
-
-    // const wrappedFn = () =>
-    //   fn(params, { uri, getResource: this.get.bind(this) });
 
     this.resources[config.uri] = resource;
   }
@@ -60,6 +55,12 @@ export default class ResourceManager {
     this.resources[config.uriTemplate] = resourceTemplate;
   }
 
+  private isResourceTemplate(
+    resourceOrTemplate: MCPResource | MCPResourceTemplate,
+  ) {
+    return resourceOrTemplate instanceof MCPResourceTemplate;
+  }
+
   async get(uri: string): Promise<ReadResourceResult> {
     const foundResource = this.resources[uri];
 
@@ -67,8 +68,9 @@ export default class ResourceManager {
       throw new ResourceNotFoundError();
     }
 
-    // TODO: Discriminate between templates and concrete resources for this to work
-
+    if (this.isResourceTemplate(foundResource)) {
+      throw new Error("NOT IMPLEMENTED");
+    }
     const paramParser = URI.generateParamParserFromURI(uri);
     const params = URI.parseParamsFromURI(uri, paramParser);
 
