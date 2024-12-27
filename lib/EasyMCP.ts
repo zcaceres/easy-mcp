@@ -1,5 +1,6 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import type {
+  PromptConfig,
   ResourceOptions,
   ResourceRequestFn,
   ServerOptions,
@@ -14,21 +15,27 @@ import ResourceManager, {
 } from "./ResourceManager";
 import {
   CallToolRequestSchema,
+  GetPromptRequestSchema,
+  ListPromptsRequestSchema,
   ListResourcesRequestSchema,
   ListToolsRequestSchema,
   ReadResourceRequestSchema,
+  type ListPromptsResult,
   type ListToolsResult,
   type ReadResourceRequest,
   type ReadResourceResult,
 } from "@modelcontextprotocol/sdk/types.js";
 import ToolManager from "./ToolManager";
+import PromptManager from "./PromptManager";
 import MCPTool from "./MCPTool";
+import MCPPrompt from "./MCPPrompt";
 
 class EasyMCP {
   name: string;
   opts: ServerOptions;
   resourceManager: ResourceManager;
   toolManager: ToolManager;
+  promptManager: PromptManager;
   server: Server;
 
   private constructor(name: string, opts: ServerOptions) {
@@ -36,6 +43,7 @@ class EasyMCP {
     this.opts = opts;
     this.resourceManager = ResourceManager.create();
     this.toolManager = ToolManager.create();
+    this.promptManager = PromptManager.create();
     this.server = new Server(
       {
         name: this.name,
@@ -90,6 +98,16 @@ class EasyMCP {
     );
   }
 
+  prompt(config: PromptConfig) {
+    const prompt = MCPPrompt.create({
+      name: config.name,
+      description: config.description,
+      args: config.args,
+      fn: config.fn,
+    });
+    return this.promptManager.add(prompt);
+  }
+
   private async registerCoreHandlers() {
     // Resources
     this.server.setRequestHandler(ListResourcesRequestSchema, async () => {
@@ -123,6 +141,7 @@ class EasyMCP {
         return { tools: this.toolManager.list() };
       },
     );
+    console.log("Registered ListTools endpoint");
 
     this.server.setRequestHandler(CallToolRequestSchema, async ({ params }) => {
       const result = await this.toolManager.call(params.name, params.arguments);
@@ -135,6 +154,35 @@ class EasyMCP {
         ],
       };
     });
+    console.log("Registered CallTool endpoint");
+
+    // Prompts
+    this.server.setRequestHandler(
+      ListPromptsRequestSchema,
+      async (): Promise<ListPromptsResult> => {
+        return { prompts: this.promptManager.list() };
+      },
+    );
+    console.log("Registered ListPrompts endpoint");
+
+    this.server.setRequestHandler(
+      GetPromptRequestSchema,
+      async ({ params }) => {
+        const result = await this.promptManager.call(
+          params.name,
+          params.arguments,
+        );
+        return {
+          messages: [
+            {
+              role: "user",
+              content: { type: "text", text: result },
+            },
+          ],
+        };
+      },
+    );
+    console.log("Registered GetPrompt endpoint");
   }
 
   static create(name: string, opts: ServerOptions) {

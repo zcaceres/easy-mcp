@@ -37,4 +37,20 @@ mcp.tool({
   },
 });
 
+mcp.prompt({
+  name: "Hello World Prompt",
+  description: "A prompt that says hello",
+  args: [
+    {
+      name: "name",
+      type: "string",
+      description: "Your name",
+      required: true,
+    },
+  ],
+  fn: async ({ name }: { name: string }) => {
+    return `Hello, ${name}!`;
+  },
+});
+
 await mcp.serve().catch(console.error);

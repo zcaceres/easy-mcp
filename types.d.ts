@@ -1,4 +1,8 @@
-import type { Resource, Tool } from "@modelcontextprotocol/sdk/types.js";
+import type {
+  PromptArgument,
+  Resource,
+  Tool,
+} from "@modelcontextprotocol/sdk/types.js";
 
 export type ServerOptions = {
   version: `${number}.${number}.${number}`;
@@ -56,13 +60,13 @@ export type ToolDefinition = {
   };
 };
 
-export type ToolFn = (...args: any[]) => Promise<any>;
+export type FulfillmentFn = (...args: any[]) => Promise<any>;
 
 export type ToolConfig = {
   name: string;
   description?: string;
   inputs?: ToolArg[];
-  fn: ToolFn;
+  fn: FulfillmentFn;
 };
 
 export type ToolArg = {
@@ -76,4 +80,17 @@ export type SerializableTool = {
   name: string;
   description: string;
   inputSchema: ToolInputSchema;
+};
+
+export type PromptDefinition = {
+  name: string;
+  description: string;
+  arguments: PromptArgument[];
+};
+
+export type PromptConfig = {
+  name: string;
+  description: string;
+  args: PromptArgument[];
+  fn: FullfillmentFn;
 };

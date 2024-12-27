@@ -4,28 +4,7 @@
 2. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
 
 START AT:
-- [] Better abstraction for tool declaration
-
-```typescript
-mcp.tool("name goes here", ... rest of definition)
-
-
-Tool.create({
-  ...declaration here
-})
-
-
-mcp.tool(
-  MCPTool.create({
-
-  })
-)
-
-
-```
-
-
-
+- [X] Better abstraction for tool declaration
 
 
 - Then figure out Resources
