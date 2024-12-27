@@ -1,14 +1,13 @@
-import {
-  type ReadResourceResult,
-  type Resource,
-} from "@modelcontextprotocol/sdk/types.js";
+import { type ReadResourceResult } from "@modelcontextprotocol/sdk/types.js";
 import type {
   ResourceConfig,
   ResourceDefinition,
-  ResourceRequestFn,
+  ResourceTemplateConfig,
+  ResourceTemplateDefinition,
 } from "../types";
 import URI from "./URI";
 import MCPResource from "./MCPResource";
+import MCPResourceTemplate from "./MCPResourceTemplate";
 
 export class ResourceError extends Error {}
 
@@ -20,18 +19,25 @@ export class ResourceConverter {
   static toSerializableResource(resource: MCPResource): ResourceDefinition {
     return resource.definition;
   }
+
+  static toSerializableResourceTemplate(
+    resourceTemplate: MCPResourceTemplate,
+  ): ResourceTemplateDefinition {
+    return resourceTemplate.definition;
+  }
 }
 
 export default class ResourceManager {
-  private resources: Record<string, MCPResource>;
+  private resources: Record<string, MCPResource | MCPResourceTemplate>;
   private constructor() {
     this.resources = {};
   }
 
-  add(config: ResourceConfig) {
+  addResource(config: ResourceConfig) {
     const resource = MCPResource.create({
       uri: config.uri,
       name: config.name,
+      mimeType: config.mimeType,
       description: config.description,
       fn: config.fn,
     });
@@ -44,12 +50,24 @@ export default class ResourceManager {
     this.resources[config.uri] = resource;
   }
 
+  addTemplate(config: ResourceTemplateConfig) {
+    const resourceTemplate = MCPResourceTemplate.create({
+      uriTemplate: config.uriTemplate,
+      name: config.name,
+      mimeType: config.mimeType,
+      description: config.description,
+    });
+    this.resources[config.uriTemplate] = resourceTemplate;
+  }
+
   async get(uri: string): Promise<ReadResourceResult> {
     const foundResource = this.resources[uri];
 
     if (!foundResource) {
       throw new ResourceNotFoundError();
     }
+
+    // TODO: Discriminate between templates and concrete resources for this to work
 
     const paramParser = URI.generateParamParserFromURI(uri);
     const params = URI.parseParamsFromURI(uri, paramParser);
@@ -69,10 +87,16 @@ export default class ResourceManager {
     };
   }
 
-  list() {
-    return Object.values(this.resources).map(
-      ResourceConverter.toSerializableResource,
-    );
+  listTemplates() {
+    return Object.values(this.resources)
+      .filter((r) => r instanceof MCPResourceTemplate)
+      .map(ResourceConverter.toSerializableResourceTemplate);
+  }
+
+  listResources() {
+    return Object.values(this.resources)
+      .filter((r) => r instanceof MCPResource)
+      .map(ResourceConverter.toSerializableResource);
   }
 
   static create() {

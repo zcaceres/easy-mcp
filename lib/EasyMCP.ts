@@ -1,7 +1,8 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import type {
   PromptConfig,
-  ResourceRequestFn,
+  ResourceConfig,
+  ResourceTemplateConfig,
   ServerOptions,
   ToolConfig,
 } from "../types";
@@ -15,20 +16,20 @@ import {
   GetPromptRequestSchema,
   ListPromptsRequestSchema,
   ListResourcesRequestSchema,
+  ListResourceTemplatesRequestSchema,
   ListToolsRequestSchema,
   ReadResourceRequestSchema,
   type CallToolResult,
   type GetPromptResult,
   type ListPromptsResult,
   type ListResourcesResult,
+  type ListResourceTemplatesResult,
   type ListToolsResult,
   type ReadResourceRequest,
   type ReadResourceResult,
 } from "@modelcontextprotocol/sdk/types.js";
 import ToolManager from "./ToolManager";
 import PromptManager from "./PromptManager";
-import MCPTool from "./MCPTool";
-import MCPPrompt from "./MCPPrompt";
 
 class EasyMCP {
   name: string;
@@ -77,30 +78,30 @@ class EasyMCP {
   }
 
   tool(config: ToolConfig) {
-    const tool = MCPTool.create({
-      name: config.name,
-      description: config.description,
-      inputs: config.inputs,
-      fn: config.fn,
-    });
-    return this.toolManager.add(tool);
+    return this.toolManager.add(config);
   }
 
-  resource({ uri, fn }: { uri: string; fn: ResourceRequestFn }) {
-    return this.resourceManager.add({
-      uri,
-      fn,
+  resource(config: ResourceConfig) {
+    return this.resourceManager.addResource({
+      uri: config.uri,
+      name: config.name,
+      description: config.description,
+      mimeType: config.mimeType,
+      fn: config.fn,
+    });
+  }
+
+  template(config: ResourceTemplateConfig) {
+    return this.resourceManager.addTemplate({
+      uriTemplate: config.uriTemplate,
+      name: config.name,
+      description: config.description,
+      mimeType: config.mimeType,
     });
   }
 
   prompt(config: PromptConfig) {
-    const prompt = MCPPrompt.create({
-      name: config.name,
-      description: config.description,
-      args: config.args,
-      fn: config.fn,
-    });
-    return this.promptManager.add(prompt);
+    return this.promptManager.add(config);
   }
 
   private async registerCoreHandlers() {
@@ -108,10 +109,17 @@ class EasyMCP {
     this.server.setRequestHandler(
       ListResourcesRequestSchema,
       async (): Promise<ListResourcesResult> => {
-        return { resources: this.resourceManager.list() };
+        return { resources: this.resourceManager.listResources() };
       },
     );
     console.log("Registered ListResources endpoint");
+
+    this.server.setRequestHandler(
+      ListResourceTemplatesRequestSchema,
+      async (): Promise<ListResourceTemplatesResult> => {
+        return { resourceTemplates: this.resourceManager.listTemplates() };
+      },
+    );
 
     this.server.setRequestHandler(
       ReadResourceRequestSchema,

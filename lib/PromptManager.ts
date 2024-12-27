@@ -1,4 +1,5 @@
-import type MCPPrompt from "./MCPPrompt";
+import type { PromptConfig } from "../types";
+import MCPPrompt from "./MCPPrompt";
 
 export class PromptError extends Error {}
 
@@ -13,7 +14,13 @@ export default class PromptManager {
     this.prompts = {};
   }
 
-  add(prompt: MCPPrompt) {
+  add(config: PromptConfig) {
+    const prompt = MCPPrompt.create({
+      name: config.name,
+      description: config.description,
+      args: config.args,
+      fn: config.fn,
+    });
     this.prompts[prompt.definition.name] = prompt;
   }
 

@@ -1,5 +1,5 @@
-import type MCPTool from "./MCPTool";
-import type { SerializableTool } from "../types";
+import MCPTool from "./MCPTool";
+import type { SerializableTool, ToolConfig } from "../types";
 
 export class ToolError extends Error {}
 
@@ -23,7 +23,13 @@ export default class ToolManager {
     this.tools = {};
   }
 
-  add(tool: MCPTool) {
+  add(config: ToolConfig) {
+    const tool = MCPTool.create({
+      name: config.name,
+      description: config.description,
+      inputs: config.inputs,
+      fn: config.fn,
+    });
     this.tools[tool.definition.name] = tool;
   }
 

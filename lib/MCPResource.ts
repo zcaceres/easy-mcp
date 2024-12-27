@@ -1,5 +1,7 @@
+import { faker } from "@faker-js/faker";
 import type {
   FulfillmentFn,
+  MimeTypes,
   ResourceConfig,
   ResourceDefinition,
 } from "../types";
@@ -21,7 +23,7 @@ class MCPResource {
       name: name || uri,
       description: description || uri,
       args: args,
-      mimeType: mimeType || "",
+      mimeType: mimeType || "text/plain",
     };
     this.fn = fn;
   }
@@ -40,14 +42,14 @@ class MCPResource {
   }
 
   static mocked() {
-    return new MCPResource({
-      uri: "mockedResource",
-      name: "mockedResource",
-      description: "A mocked resource",
+    return {
+      uri: faker.internet.url(),
+      name: faker.lorem.word(),
+      description: faker.lorem.sentence(),
       args: [],
-      mimeType: "text/plain",
+      mimeType: faker.system.mimeType() as MimeTypes,
       fn: async () => "mocked result",
-    });
+    };
   }
 }
 

@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import type { ToolArg, ToolConfig, ToolDefinition } from "../types";
 
 class MCPTool {
@@ -44,19 +45,25 @@ class MCPTool {
   }
 
   static mocked() {
-    return new MCPTool({
-      name: "mockedTool",
-      description: "A mocked tool",
+    return {
+      name: faker.word.noun(),
+      description: faker.lorem.sentence(),
       inputs: [
         {
-          name: "mockedInput",
-          type: "string",
-          description: "A mocked input",
-          required: true,
+          name: faker.word.adjective(),
+          type: faker.helpers.arrayElement([
+            "string",
+            "number",
+            "array",
+            "object",
+          ]),
+          description: faker.lorem.sentence(),
+          required: faker.datatype.boolean(),
         },
       ],
+      // We want fn to be deterministic for testing.
       fn: async () => "mocked result",
-    });
+    };
   }
 }
 

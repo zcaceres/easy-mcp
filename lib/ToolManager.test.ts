@@ -18,25 +18,19 @@ describe("ToolManager", () => {
     toolManager.add(mockTool);
     const listedTools = toolManager.list();
     expect(listedTools).toHaveLength(1);
-    expect(listedTools[0].name).toBe(mockTool.definition.name);
+    expect(listedTools[0].name).toBe(mockTool.name);
   });
 
   test("list() should return all added tools", () => {
     const mockTool1 = MCPTool.mocked();
-    const mockTool2 = MCPTool.create({
-      name: "anotherTool",
-      description: "Another mocked tool",
-      inputs: [],
-      fn: async () => "another result",
-    });
-
+    const mockTool2 = MCPTool.mocked();
     toolManager.add(mockTool1);
     toolManager.add(mockTool2);
 
     const listedTools = toolManager.list();
     expect(listedTools).toHaveLength(2);
-    expect(listedTools[0].name).toBe(mockTool1.definition.name);
-    expect(listedTools[1].name).toBe(mockTool2.definition.name);
+    expect(listedTools[0].name).toBe(mockTool1.name);
+    expect(listedTools[1].name).toBe(mockTool2.name);
   });
 
   test("list() should return an empty array when no tools are added", () => {
@@ -47,7 +41,7 @@ describe("ToolManager", () => {
     const mockTool = MCPTool.mocked();
     toolManager.add(mockTool);
 
-    const result = await toolManager.call(mockTool.definition.name);
+    const result = await toolManager.call(mockTool.name);
     expect(result).toBe("mocked result");
   });
 
@@ -60,7 +54,8 @@ describe("ToolManager", () => {
 
 describe("ToolConverter", () => {
   test("toSerializableTool should convert MCPTool to SerializableTool", () => {
-    const mockTool = MCPTool.mocked();
+    const mockToolConfig = MCPTool.mocked();
+    const mockTool = MCPTool.create(mockToolConfig);
     const result = ToolConverter.toSerializableTool(mockTool);
 
     expect(result).toEqual({

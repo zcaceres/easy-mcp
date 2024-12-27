@@ -18,25 +18,20 @@ describe("PromptManager", () => {
     promptManager.add(mockPrompt);
     const listedPrompts = promptManager.list();
     expect(listedPrompts).toHaveLength(1);
-    expect(listedPrompts[0].name).toBe(mockPrompt.definition.name);
+    expect(listedPrompts[0].name).toBe(mockPrompt.name);
   });
 
   test("list() should return all added prompts", () => {
     const mockPrompt1 = MCPPrompt.mocked();
-    const mockPrompt2 = MCPPrompt.create({
-      name: "anotherPrompt",
-      description: "Another mocked prompt",
-      args: [],
-      fn: async () => "another result",
-    });
+    const mockPrompt2 = MCPPrompt.mocked();
 
     promptManager.add(mockPrompt1);
     promptManager.add(mockPrompt2);
 
     const listedPrompts = promptManager.list();
     expect(listedPrompts).toHaveLength(2);
-    expect(listedPrompts[0].name).toBe(mockPrompt1.definition.name);
-    expect(listedPrompts[1].name).toBe(mockPrompt2.definition.name);
+    expect(listedPrompts[0].name).toBe(mockPrompt1.name);
+    expect(listedPrompts[1].name).toBe(mockPrompt2.name);
   });
 
   test("list() should return an empty array when no prompts are added", () => {
@@ -47,8 +42,8 @@ describe("PromptManager", () => {
     const mockPrompt = MCPPrompt.mocked();
     promptManager.add(mockPrompt);
 
-    const result = await promptManager.call(mockPrompt.definition.name);
-    expect(result).toBe("mocked result");
+    const result = await promptManager.call(mockPrompt.name);
+    expect(result).toBe("prompt result");
   });
 
   test("call() should throw PromptNotFoundError for non-existent prompt", async () => {

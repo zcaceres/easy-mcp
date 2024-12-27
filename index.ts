@@ -1,5 +1,4 @@
 import EasyMCP from "./lib/EasyMCP";
-// import type { ResourceRequestContext } from "./types";
 
 const mcp = EasyMCP.create("test-mcp", {
   version: "0.1.0",
@@ -7,24 +6,17 @@ const mcp = EasyMCP.create("test-mcp", {
 
 mcp.resource({
   uri: "dir://desktop",
+  name: "Desktop",
+  description: "The desktop",
+  mimeType: "text/plain",
   fn: async () => {
     return "file://desktop/file1.txt";
   },
 });
 
-// async ({ fileName, id }, ctx: ResourceRequestContext) => {
-//   // const resource = ctx.getResource(`file://${fileName}`);
-//   return {
-//     contents: [
-//       {
-//         uri: "whatever",
-//         type: "text",
-//         text: `File: ${fileName} with ID: ${id}`,
-//       },
-//     ],
-//   };
-// },
-// );
+mcp.template({
+  uriTemplate: "file://{filename}",
+});
 
 mcp.tool({
   name: "hello world",
@@ -44,6 +36,7 @@ mcp.tool({
 mcp.prompt({
   name: "Hello World Prompt",
   description: "A prompt that says hello",
+  // TODO: find a way to infer the args from the parameters input to fn below, so we don't have to explicitly define them here.
   args: [
     {
       name: "name",

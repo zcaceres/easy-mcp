@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import type { FulfillmentFn, PromptConfig, PromptDefinition } from "../types";
 
 class MCPPrompt {
@@ -27,19 +28,19 @@ class MCPPrompt {
   }
 
   static mocked() {
-    return new MCPPrompt({
-      name: "mockedPrompt",
-      description: "A mocked prompt",
+    return {
+      name: faker.lorem.word(),
+      description: faker.lorem.sentence(),
       args: [
         {
-          name: "mockedArg",
-          type: "string",
-          description: "A mocked arg",
-          required: true,
+          name: faker.lorem.word(),
+          type: faker.helpers.arrayElement(["string", "number", "boolean"]),
+          description: faker.lorem.sentence(),
+          required: faker.datatype.boolean(),
         },
       ],
-      fn: async () => "mocked result",
-    });
+      fn: async () => "prompt result",
+    };
   }
 }
 

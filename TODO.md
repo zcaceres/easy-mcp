@@ -15,17 +15,15 @@ Server Class
     Prompt Managers
     Core Handlers
     - [X] list resource
-      fulfilled by the resource manager
     - [X] read resource
-      fulfilled by the resource manager
-    - [] add resource
+    - [X] add resource
     - [] sub
     - [] unsub
     - [X] list tools
     - [X] read tool
     - [X] add tool
-    - [X] call tool
-    - [X] list prompts
+- [X] call tool
+  - [X] list prompts
     - [X] get prompt
 ```
 
@@ -51,6 +49,7 @@ Server Class
 
 ### Test Coverage
 - [X] Tests on each major capability
+- [] Fix Resources GET test
 - [] Test with Claude Desktop
 
 ### Example Servers
