@@ -8,8 +8,8 @@ class MCPPrompt {
   constructor({ name, description, args, fn }: PromptConfig) {
     this._definition = {
       name: name,
-      description: description,
-      arguments: args,
+      description: description || name,
+      args: args || [],
     };
     this.fn = fn;
   }

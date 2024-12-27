@@ -54,13 +54,13 @@ export type SerializableTool = {
 export type PromptDefinition = {
   name: string;
   description: string;
-  arguments: PromptArgument[];
+  args: PromptArgument[];
 };
 
 export type PromptConfig = {
   name: string;
-  description: string;
-  args: PromptArgument[];
+  description?: string;
+  args?: PromptArgument[];
   fn: FullfillmentFn;
 };
 

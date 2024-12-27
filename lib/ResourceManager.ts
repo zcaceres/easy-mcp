@@ -39,6 +39,10 @@ export default class ResourceManager {
   }
 
   addResource(config: ResourceConfig) {
+    if (this.resources[config.uri]) {
+      console.warn("Resource already exists... overwriting");
+    }
+
     const resource = MCPResource.create({
       uri: config.uri,
       name: config.name,
@@ -51,6 +55,10 @@ export default class ResourceManager {
   }
 
   addTemplate(config: ResourceTemplateConfig) {
+    if (this.templates[config.uriTemplate]) {
+      console.warn("Template already exists... overwriting");
+    }
+
     const resourceTemplate = MCPResourceTemplate.create({
       uriTemplate: config.uriTemplate,
       name: config.name,
@@ -58,6 +66,7 @@ export default class ResourceManager {
       description: config.description,
       fn: config.fn,
     });
+
     this.templates[config.uriTemplate] = resourceTemplate;
   }
 

@@ -56,9 +56,9 @@ class EasyMCP {
           resources: {},
           tools: {},
           prompts: {},
-          roots: {},
-          samplings: {},
-          experimental: {},
+          // roots: {},
+          // samplings: {},
+          // experimental: {},
         },
       },
     );
@@ -160,10 +160,7 @@ class EasyMCP {
     this.server.setRequestHandler(
       CallToolRequestSchema,
       async ({ params }): Promise<CallToolResult> => {
-        const result = await this.toolManager.call(
-          params.name,
-          params.arguments,
-        );
+        const result = await this.toolManager.call(params.name, params.args);
         return {
           content: [
             {
@@ -188,10 +185,7 @@ class EasyMCP {
     this.server.setRequestHandler(
       GetPromptRequestSchema,
       async ({ params }): Promise<GetPromptResult> => {
-        const result = await this.promptManager.call(
-          params.name,
-          params.arguments,
-        );
+        const result = await this.promptManager.call(params.name, params.args);
         return {
           messages: [
             {

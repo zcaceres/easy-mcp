@@ -1,12 +1,6 @@
 ## TODO
 
-1. Need to be able to make a resource from a template via handlebars.
-
-2. Possibly need to make a separate in memory map for templates?
-
-3. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
-
-
+2. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
 
 
 ```
@@ -37,21 +31,16 @@ Server Class
 ### Capabilities
 - [X] Tools
 - [X] Prompts
-- [] Resources
+- [X] Resources
+- [] Conversion flow / message wrappers
 - [] Context Object
-   - [] Progress bar reporting through report_progress()
    - [] Logging via debug(), info(), warning(), and error()
    - [] Resource access through read_resource()
    - [] Request metadata via request_id and client_id
-- [] Roots
-- [] Samplings (delay)
-- [] User / Assistant Message wrapper (compositional functions)
 - [] Image conversion
-- [] Instant install to Claude by script
 
 ### Test Coverage
 - [X] Tests on each major capability
-- [] Fix Resources GET test
 - [] Test with Claude Desktop
 
 ### Example Servers
@@ -62,8 +51,10 @@ Server Class
 ### Docs
 - [] Development Mode
 - [] Claude Desktop Integration directions
+- [] Instant install to Claude by script
 
 ### Polish
-- [] logging levels
 - [] dependencies
 - [] Can we infer the inputs schema definition just from the type signature of the fn that's passed in when defining a tool?
+- [] Roots
+- [] Samplings (delay)
