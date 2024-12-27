@@ -1,5 +1,7 @@
 # easy-mcp
 
+> EasyMCP is in beta, with a first release coming in January 2025. Please report any issues you encounter.
+
 Easy MCP is the simplest way to create Model Context Protocol (MCP) servers in TypeScript.
 
 It hides the plumbing and definitions behind simple, easy-to-use functions, allowing you to focus on building your server. Easy MCP strives to mimic the syntax of popular server frameworks like Express, making it easy to get started.
