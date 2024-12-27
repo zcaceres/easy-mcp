@@ -1,9 +1,9 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import type {
-  MCPResourceRequestParams,
   ResourceOptions,
   ResourceRequestFn,
   ServerOptions,
+  ToolConfig,
   ToolOptions,
   ToolRequestFn,
 } from "../types";
@@ -22,6 +22,7 @@ import {
   type ReadResourceResult,
 } from "@modelcontextprotocol/sdk/types.js";
 import ToolManager from "./ToolManager";
+import MCPTool from "./MCPTool";
 
 class EasyMCP {
   name: string;
@@ -67,20 +68,14 @@ class EasyMCP {
     }
   }
 
-  tool(name: string, fn: ToolRequestFn, opts: Partial<ToolOptions>) {
-    if (!opts.inputSchema) {
-      return this.toolManager.add(name, fn, {
-        inputSchema: {
-          type: "object",
-          properties: {},
-        },
-        description: opts.description ?? "",
-      });
-    }
-    return this.toolManager.add(name, fn, {
-      inputSchema: opts.inputSchema,
-      description: opts.description ?? "",
+  tool(config: ToolConfig) {
+    const tool = MCPTool.create({
+      name: config.name,
+      description: config.description,
+      inputs: config.inputs,
+      fn: config.fn,
     });
+    return this.toolManager.add(tool);
   }
 
   resource(uri: string, fn: ResourceRequestFn, opts: ResourceOptions = {}) {

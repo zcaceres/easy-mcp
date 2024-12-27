@@ -4,7 +4,30 @@
 2. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
 
 START AT:
-- Running a tool with input from the caller
+- [] Better abstraction for tool declaration
+
+```typescript
+mcp.tool("name goes here", ... rest of definition)
+
+
+Tool.create({
+  ...declaration here
+})
+
+
+mcp.tool(
+  MCPTool.create({
+
+  })
+)
+
+
+```
+
+
+
+
+
 - Then figure out Resources
 
 
@@ -13,24 +36,22 @@ START AT:
 Server Class
   Managers
     - [X] Resource Manager
-    Tool Manager
+    - [X] Tool Manager
     Prompt Managers
     Core Handlers
     - [X] list resource
       fulfilled by the resource manager
     - [X] read resource
       fulfilled by the resource manager
-    - [] add
+    - [] add resource
     - [] sub
     - [] unsub
-    list tools
-      fulfilled by the tool manager
-    call tools
-      fulfilled by the tool manager
-    list prompts
-      fulfilled by the prompt manager
-    get prompt
-      fulfilled by the prompt manager
+    - [X] list tools
+    - [X] read tool
+    - [X] add tool
+    - [X] call tool
+    - [] list prompts
+    - [] get prompt
 ```
 
 ### Server Concepts
@@ -39,11 +60,9 @@ Server Class
 
 
 ### Capabilities
-- [X] Resources
-  - [X] List
-  - [X] Read
+- [X] Tools
+- [] Resources
 - [] Prompts
-- [] Tools
 - [] Context Object
    - [] Progress bar reporting through report_progress()
    - [] Logging via debug(), info(), warning(), and error()
@@ -70,3 +89,4 @@ Server Class
 ### Polish
 - [] logging levels
 - [] dependencies
+- [] Can we infer the inputs schema definition just from the type signature of the fn that's passed in when defining a tool?

@@ -1,5 +1,5 @@
-import type { Tool } from "@modelcontextprotocol/sdk/types.js";
-import type { EasyMCPTool, ToolOptions, ToolRequestFn } from "../types";
+import type MCPTool from "./MCPTool";
+import type { SerializableTool } from "../types";
 
 export class ToolError extends Error {}
 
@@ -8,43 +8,27 @@ export class ToolNotFoundError extends ToolError {
 }
 
 export class ToolConverter {
-  static fromMCPTool(tool: EasyMCPTool): Tool {
+  static toSerializableTool(tool: MCPTool): SerializableTool {
     return {
-      name: tool.name,
-      description: tool.description,
-      inputSchema: tool.inputSchema,
-    };
-  }
-
-  static toMCPTool(tool: Tool, fn: ToolRequestFn): EasyMCPTool {
-    return {
-      name: tool.name,
-      description: tool.description,
-      inputSchema: tool.inputSchema,
-      fn,
+      name: tool.definition.name,
+      description: tool.definition.description,
+      inputSchema: tool.definition.input_schema,
     };
   }
 }
 
 export default class ToolManager {
-  private tools: Record<string, EasyMCPTool>;
+  private tools: Record<string, MCPTool>;
   private constructor() {
     this.tools = {};
   }
 
-  add(name: string, fn: ToolRequestFn, opts: ToolOptions) {
-    this.tools[name] = ToolConverter.toMCPTool(
-      {
-        name,
-        inputSchema: opts.inputSchema ?? {},
-        description: opts.description,
-      },
-      fn,
-    );
+  add(tool: MCPTool) {
+    this.tools[tool.definition.name] = tool;
   }
 
   list() {
-    return Object.values(this.tools).map(ToolConverter.fromMCPTool);
+    return Object.values(this.tools).map(ToolConverter.toSerializableTool);
   }
 
   async call(name: string, args?: Record<string, unknown>) {
@@ -54,7 +38,7 @@ export default class ToolManager {
       throw new ToolNotFoundError();
     }
 
-    const result = await foundTool.fn(args);
+    const result = await foundTool.callFn(args);
     return result;
   }
 
