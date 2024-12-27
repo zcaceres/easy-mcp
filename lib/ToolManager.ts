@@ -47,14 +47,14 @@ export default class ToolManager {
     return Object.values(this.tools).map(ToolConverter.fromMCPTool);
   }
 
-  async call(name: string) {
+  async call(name: string, args?: Record<string, unknown>) {
     const foundTool = this.tools[name];
 
     if (!foundTool) {
       throw new ToolNotFoundError();
     }
 
-    const result = await foundTool.fn();
+    const result = await foundTool.fn(args);
     return result;
   }
 

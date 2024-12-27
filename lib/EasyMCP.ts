@@ -130,7 +130,7 @@ class EasyMCP {
     );
 
     this.server.setRequestHandler(CallToolRequestSchema, async ({ params }) => {
-      const result = await this.toolManager.call(params.name);
+      const result = await this.toolManager.call(params.name, params.arguments);
       return {
         content: [
           {

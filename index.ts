@@ -27,11 +27,19 @@ mcp.resource(
 
 mcp.tool(
   "hello-world",
-  async () => {
-    return "Hello World";
+  async ({ message }: { message: string }) => {
+    return `Hello world: ${message}`;
   },
   {
     description: "Hello world function",
+    inputSchema: {
+      type: "object",
+      properties: {
+        message: {
+          type: "string",
+        },
+      },
+    },
   },
 );
 
