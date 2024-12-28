@@ -8,7 +8,7 @@ class RootsManager {
   }
 
   list() {
-    return [];
+    return this.roots;
   }
 
   static create() {
