@@ -1,20 +1,5 @@
 import { test, expect, beforeEach, describe, mock } from "bun:test";
 import EasyMCP from "./EasyMCP";
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import ResourceManager from "./ResourceManager";
-import ToolManager from "./ToolManager";
-import PromptManager from "./PromptManager";
-import RootsManager from "./RootsManager";
-
-// Mock the external modules
-mock.module("@modelcontextprotocol/sdk/server/index.js", () => ({
-  Server: mock(),
-}));
-
-mock.module("@modelcontextprotocol/sdk/server/stdio.js", () => ({
-  StdioServerTransport: mock(),
-}));
 
 describe("EasyMCP", () => {
   let easyMCP: EasyMCP;
