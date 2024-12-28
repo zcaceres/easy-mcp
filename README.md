@@ -22,6 +22,10 @@ Or if you're using bun:
 bun add easy-mcp
 ```
 
+## Limitations
+
+- No support for sampling... yet.
+
 ## Usage
 
 Here's a basic example of how to use easy-mcp:
@@ -117,6 +121,10 @@ Defines a tool.
 ### `mcp.prompt(config: PromptConfig)`
 
 Defines a prompt.
+
+### `mcp.root(config: Root)`
+
+Defines a root.
 
 ### `mcp.serve()`
 

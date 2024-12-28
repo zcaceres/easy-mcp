@@ -5,10 +5,6 @@
   - What are the supported data types
 2. Parse function signature for input arguments
 
-
-
-
-
 ```
 Server Class
   Managers
@@ -38,6 +34,7 @@ Server Class
 - [X] Tools
 - [X] Prompts
 - [X] Resources
+- [] Roots
 - [] Conversion flow / message wrappers
 - [] Context Object
    - [] Logging via debug(), info(), warning(), and error()
@@ -62,6 +59,6 @@ Server Class
 ### Polish
 - [] dependencies
 - [] Can we infer the inputs schema definition just from the type signature of the fn that's passed in when defining a tool?
-- [] Roots
+
 - [] Samplings (delay)
 - [] SSE

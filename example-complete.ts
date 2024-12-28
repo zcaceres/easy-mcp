@@ -56,4 +56,9 @@ mcp.prompt({
   },
 });
 
+mcp.root({
+  name: "Optional Name",
+  uri: "/Users/username/Desktop",
+});
+
 await mcp.serve().catch(console.error);

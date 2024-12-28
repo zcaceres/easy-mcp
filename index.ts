@@ -34,8 +34,8 @@ mcp.tool({
       required: false,
     },
   ],
-  fn: async ({ name }) => {
-    return `Hello, ${name}!`;
+  fn: async ({ optionalInput }) => {
+    return `Hello, ${optionalInput}!`;
   },
 });
 
@@ -54,6 +54,11 @@ mcp.prompt({
   fn: async ({ name }: { name: string }) => {
     return `Hello, ${name}!`;
   },
+});
+
+mcp.root({
+  name: "Optional Name",
+  uri: "/Users/username/Desktop",
 });
 
 await mcp.serve().catch(console.error);

@@ -18,6 +18,7 @@ import {
   ListPromptsRequestSchema,
   ListResourcesRequestSchema,
   ListResourceTemplatesRequestSchema,
+  ListRootsRequestSchema,
   ListToolsRequestSchema,
   ReadResourceRequestSchema,
   type CallToolResult,
@@ -25,13 +26,16 @@ import {
   type ListPromptsResult,
   type ListResourcesResult,
   type ListResourceTemplatesResult,
+  type ListRootsResult,
   type ListToolsResult,
   type ReadResourceRequest,
   type ReadResourceResult,
+  type Root,
   type ServerCapabilities,
 } from "@modelcontextprotocol/sdk/types.js";
 import ToolManager from "./ToolManager";
 import PromptManager from "./PromptManager";
+import RootsManager from "./RootsManager";
 
 class EasyMCP {
   name: string;
@@ -39,6 +43,7 @@ class EasyMCP {
   resourceManager: ResourceManager;
   toolManager: ToolManager;
   promptManager: PromptManager;
+  rootsManager: RootsManager;
   server: Server | null = null;
 
   private constructor(name: string, opts: ServerOptions) {
@@ -47,6 +52,7 @@ class EasyMCP {
     this.resourceManager = ResourceManager.create();
     this.toolManager = ToolManager.create();
     this.promptManager = PromptManager.create();
+    this.rootsManager = RootsManager.create();
   }
 
   registerCapabilities() {
@@ -66,7 +72,10 @@ class EasyMCP {
     if (this.promptManager.list().length) {
       capabilities.prompts = {};
     }
-    // roots: {},
+
+    if (this.rootsManager.list().length) {
+      capabilities.roots = {};
+    }
     // samplings: {},
     // experimental: {},
 
@@ -123,7 +132,15 @@ class EasyMCP {
     return this.promptManager.add(config);
   }
 
+  root(config: Root) {
+    return this.rootsManager.add(config);
+  }
+
   private async registerCoreHandlers() {
+    if (!this.server) {
+      throw new Error("Server not initialized. Call serve() first.");
+    }
+
     // Resources
     this.server.setRequestHandler(
       ListResourcesRequestSchema,
@@ -178,7 +195,10 @@ class EasyMCP {
     this.server.setRequestHandler(
       CallToolRequestSchema,
       async ({ params }): Promise<CallToolResult> => {
-        const result = await this.toolManager.call(params.name, params.args);
+        const result = await this.toolManager.call(
+          params.name,
+          params.arguments,
+        );
         return {
           content: [
             {
@@ -203,7 +223,10 @@ class EasyMCP {
     this.server.setRequestHandler(
       GetPromptRequestSchema,
       async ({ params }): Promise<GetPromptResult> => {
-        const result = await this.promptManager.call(params.name, params.args);
+        const result = await this.promptManager.call(
+          params.name,
+          params.arguments,
+        );
         return {
           messages: [
             {
@@ -215,6 +238,15 @@ class EasyMCP {
       },
     );
     console.log("Registered GetPrompt endpoint");
+
+    // Roots
+    this.server.setRequestHandler(
+      ListRootsRequestSchema,
+      async (): Promise<ListRootsResult> => {
+        return { roots: this.rootsManager.list() };
+      },
+    );
+    console.log("Registered ListRoots endpoint");
   }
 
   static create(name: string, opts: ServerOptions) {
