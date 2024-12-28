@@ -1,6 +1,12 @@
 ## TODO
 
-2. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
+3. list capabilities based on what has been registered
+1. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
+  - What are the supported data types
+2. Parse function signature for input arguments
+
+
+
 
 
 ```
@@ -58,3 +64,4 @@ Server Class
 - [] Can we infer the inputs schema definition just from the type signature of the fn that's passed in when defining a tool?
 - [] Roots
 - [] Samplings (delay)
+- [] SSE

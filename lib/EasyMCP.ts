@@ -5,6 +5,7 @@ import type {
   ResourceTemplateConfig,
   ServerOptions,
   ToolConfig,
+  UninitializedServer,
 } from "../types";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import ResourceManager, {
@@ -27,6 +28,7 @@ import {
   type ListToolsResult,
   type ReadResourceRequest,
   type ReadResourceResult,
+  type ServerCapabilities,
 } from "@modelcontextprotocol/sdk/types.js";
 import ToolManager from "./ToolManager";
 import PromptManager from "./PromptManager";
@@ -37,7 +39,7 @@ class EasyMCP {
   resourceManager: ResourceManager;
   toolManager: ToolManager;
   promptManager: PromptManager;
-  server: Server;
+  server: Server | null = null;
 
   private constructor(name: string, opts: ServerOptions) {
     this.name = name;
@@ -45,29 +47,45 @@ class EasyMCP {
     this.resourceManager = ResourceManager.create();
     this.toolManager = ToolManager.create();
     this.promptManager = PromptManager.create();
-    this.server = new Server(
-      {
-        name: this.name,
-        version: this.opts.version,
-      },
-      // @TODO: Figure out how to expose capabilities based on the handlers registered
-      {
-        capabilities: {
-          resources: {},
-          tools: {},
-          prompts: {},
-          // roots: {},
-          // samplings: {},
-          // experimental: {},
-        },
-      },
-    );
+  }
+
+  registerCapabilities() {
+    const capabilities: ServerCapabilities = {};
+
+    if (
+      this.resourceManager.listResources().length ||
+      this.resourceManager.listTemplates().length
+    ) {
+      capabilities.resources = {};
+    }
+
+    if (this.toolManager.list().length) {
+      capabilities.tools = {};
+    }
+
+    if (this.promptManager.list().length) {
+      capabilities.prompts = {};
+    }
+    // roots: {},
+    // samplings: {},
+    // experimental: {},
+
+    return {
+      capabilities,
+    };
   }
 
   async serve() {
     try {
       console.log(`Starting server ${this.name} with options:`, this.opts);
       const transport = new StdioServerTransport();
+      this.server = new Server(
+        {
+          name: this.name,
+          version: this.opts.version,
+        },
+        this.registerCapabilities(),
+      );
       await this.registerCoreHandlers();
       await this.server.connect(transport);
       console.log("Server started");
