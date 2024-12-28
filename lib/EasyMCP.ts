@@ -5,7 +5,6 @@ import type {
   ResourceTemplateConfig,
   ServerOptions,
   ToolConfig,
-  UninitializedServer,
 } from "../types";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import ResourceManager, {

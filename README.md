@@ -24,7 +24,8 @@ bun add easy-mcp
 
 ## Limitations
 
-- No support for sampling... yet.
+- No support for sampling
+- No support for SSE
 
 ## Usage
 

@@ -27,7 +27,7 @@ Server Class
 
 ### Server Concepts
 - [X] customize the transport layer
-- [] Declare the capabilities of the server in the constructor
+- [X] Declare the capabilities of the server in the constructor
 
 
 ### Capabilities

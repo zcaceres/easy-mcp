@@ -4,8 +4,6 @@ import type {
   Tool,
 } from "@modelcontextprotocol/sdk/types.js";
 
-export type UninitializedServer = {};
-
 export type ServerOptions = {
   version: `${number}.${number}.${number}`;
 };
