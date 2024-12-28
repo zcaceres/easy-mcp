@@ -23,17 +23,17 @@ describe("EasyMCP", () => {
       name: "Test Resource",
       description: "A test resource",
       mimeType: "text/plain",
-      fn: () => "Test content",
+      fn: async () => "Test content",
     });
     easyMCP.tool({
       name: "testTool",
       description: "A test tool",
-      fn: () => "Test result",
+      fn: async () => "Test result",
     });
     easyMCP.prompt({
       name: "testPrompt",
       description: "A test prompt",
-      fn: () => "Test prompt",
+      fn: async () => "Test prompt",
     });
     easyMCP.root({ name: "testRoot", uri: "test://root" });
 
