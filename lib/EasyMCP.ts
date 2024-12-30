@@ -36,7 +36,7 @@ import ToolManager from "./ToolManager";
 import PromptManager from "./PromptManager";
 import RootsManager from "./RootsManager";
 
-class EasyMCP {
+abstract class BaseMCP {
   name: string;
   opts: ServerOptions;
   resourceManager: ResourceManager;
@@ -45,7 +45,7 @@ class EasyMCP {
   rootsManager: RootsManager;
   server: Server | null = null;
 
-  private constructor(name: string, opts: ServerOptions) {
+  constructor(name: string, opts: ServerOptions) {
     this.name = name;
     this.opts = opts;
     this.resourceManager = ResourceManager.create();
@@ -248,9 +248,22 @@ class EasyMCP {
     console.log("Registered ListRoots endpoint");
   }
 
-  static create(name: string, opts: ServerOptions) {
-    return new EasyMCP(name, opts);
-  }
+  // static create(name: string, opts: ServerOptions) {
+  //   return new BaseMCP(name, opts);
+  // }
 }
 
-export default EasyMCP;
+export default class EasyMCP extends BaseMCP {
+  constructor() {
+    super("", {});
+    this.REGISTERED_TOOLS.forEach((tool) => {
+      this.tool(tool);
+    });
+  }
+
+  // static serve({ version, description }) {
+  //   return new EasyMCP({
+  //     version,
+  //     description,
+  // }
+}

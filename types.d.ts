@@ -166,3 +166,26 @@ export type MimeTypes =
   | "video/3gpp"
   | "video/3gpp2"
   | "application/x-7z-compressed";
+
+export interface ParameterMetadata {
+  name: string;
+  type: "string" | "number" | "object" | "array";
+  optional?: boolean;
+}
+
+export interface FunctionConfig {
+  name?: string;
+  description?: string;
+  version?: number;
+  parameters?: ParameterMetadata[];
+  optionalParameters?: string[];
+}
+
+export interface FunctionMetadata {
+  name: string;
+  description: string;
+  version?: number;
+  parameters: ParameterMetadata[];
+  optionalParameters?: string[];
+  [key: string]: any;
+}

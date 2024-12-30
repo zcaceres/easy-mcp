@@ -1,9 +1,46 @@
 ## TODO
 
-3. list capabilities based on what has been registered
+
+
+What's the point?
+- hide input configuration!
+  - if we can do this, we can end up hiding a lot of configuration in general
+
+
+1. I add the @Tool decorator
+  This runs at runtime and executes BEFORE the inner function does
+2. I get a fully configured tool added to the ToolManager
+
+
+
+1. Finish Magic Config integration
+
+- Subclassing behavior from easy MCP
+  - declare every item as instance method with decorator
+    - @tool
+    - @resource
+    - @prompt
+    - @root
+  - These decorates pull out function params etc and then call the "add" method relevant for their type
+
+
+2. Conversion and formatting of messages and responses
+
 1. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
   - What are the supported data types
-2. Parse function signature for input arguments
+2. Logging and configuration of Logging (see LoggingMessageNotification)
+3. Parse function signature for input arguments
+
+Textcontent
+ImageContent
+EmbeddedResource
+PromptMessage
+
+BlobResourceContents
+TextResourceContents
+ResourceContents
+
+
 
 ```
 Server Class
@@ -34,13 +71,13 @@ Server Class
 - [X] Tools
 - [X] Prompts
 - [X] Resources
-- [] Roots
+- [X] Roots
 - [] Conversion flow / message wrappers
+- [] Image conversion
 - [] Context Object
    - [] Logging via debug(), info(), warning(), and error()
    - [] Resource access through read_resource()
    - [] Request metadata via request_id and client_id
-- [] Image conversion
 
 ### Test Coverage
 - [X] Tests on each major capability

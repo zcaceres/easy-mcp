@@ -7,6 +7,8 @@
     "moduleDetection": "force",
     "jsx": "react-jsx",
     "allowJs": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
 
     // Bundler mode
     "moduleResolution": "bundler",

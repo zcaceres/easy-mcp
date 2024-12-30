@@ -1,6 +1,6 @@
-import EasyMCP from "./lib/EasyMCP";
+import BaseMCP from "./lib/EasyMCP";
 
-const mcp = EasyMCP.create("test-mcp", {
+const mcp = BaseMCP.create("test-mcp", {
   version: "0.1.0",
 });
 

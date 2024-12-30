@@ -41,7 +41,13 @@ class MCPTool {
   }
 
   static create(config: ToolConfig) {
-    return new MCPTool(config);
+    const parsedFn = {};
+    return new MCPTool({
+      name: config.name,
+      description: config.description,
+      inputs: config.inputs || [],
+      fn: config.fn,
+    });
   }
 
   static mocked() {

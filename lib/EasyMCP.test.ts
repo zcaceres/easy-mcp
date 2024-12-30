@@ -1,15 +1,15 @@
 import { test, expect, beforeEach, describe, mock } from "bun:test";
-import EasyMCP from "./EasyMCP";
+import BaseMCP from "./EasyMCP";
 
 describe("EasyMCP", () => {
-  let easyMCP: EasyMCP;
+  let easyMCP: BaseMCP;
 
   beforeEach(() => {
-    easyMCP = EasyMCP.create("TestServer", { version: "1.0.0" });
+    easyMCP = BaseMCP.create("TestServer", { version: "1.0.0" });
   });
 
   test("create() should return a new instance of EasyMCP", () => {
-    expect(easyMCP).toBeInstanceOf(EasyMCP);
+    expect(easyMCP).toBeInstanceOf(BaseMCP);
   });
 
   test("registerCapabilities() should return correct capabilities", () => {
