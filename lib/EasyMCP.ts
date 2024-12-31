@@ -267,6 +267,14 @@ export default class EasyMCP extends BaseMCP {
     super("", { version, description });
     this.name = this.constructor.name;
 
+    // Handle class-level Root decorators
+    const rootConfigs = (this.constructor as any).rootConfigs;
+    if (rootConfigs && Array.isArray(rootConfigs)) {
+      rootConfigs.forEach((rootConfig) => {
+        this.root(rootConfig);
+      });
+    }
+
     const childMethods = Object.getOwnPropertyNames(Object.getPrototypeOf(this))
       .filter((method) => typeof this[method] === "function")
       .filter(
@@ -278,30 +286,36 @@ export default class EasyMCP extends BaseMCP {
 
     childMethods.forEach((method) => {
       // Assuming the decorator has been run to wrap these functions, we should have one of these configs on the relevant method.
+      // @ts-expect-error Due to decorator behavior we're doing some JS prototype hacking that triggers a TS error here
       if (this[method][metadataKey].toolConfig) {
+        // @ts-expect-error Due to decorator behavior we're doing some JS prototype hacking that triggers a TS error here
         this.tool(this[method][metadataKey].toolConfig);
       }
 
+      // @ts-expect-error Due to decorator behavior we're doing some JS prototype hacking that triggers a TS error here
       if (this[method][metadataKey].promptConfig) {
+        // @ts-expect-error Due to decorator behavior we're doing some JS prototype hacking that triggers a TS error here
         this.prompt(this[method][metadataKey].promptConfig);
       }
-
+      // @ts-expect-error Due to decorator behavior we're doing some JS prototype hacking that triggers a TS error here
       if (this[method][metadataKey].rootConfig) {
+        // @ts-expect-error Due to decorator behavior we're doing some JS prototype hacking that triggers a TS error here
         this.root(this[method][metadataKey].rootConfig);
       }
 
+      // @ts-expect-error Due to decorator behavior we're doing some JS prototype hacking that triggers a TS error here
       if (this[method][metadataKey].resourceConfig) {
+        // @ts-expect-error Due to decorator behavior we're doing some JS prototype hacking that triggers a TS error here
         this.resource(this[method][metadataKey].resourceConfig);
       }
 
+      // @ts-expect-error Due to decorator behavior we're doing some JS prototype hacking that triggers a TS error here
       if (this[method][metadataKey].resourceTemplateConfig) {
+        // @ts-expect-error Due to decorator behavior we're doing some JS prototype hacking that triggers a TS error here
         this.template(this[method][metadataKey].resourceTemplateConfig);
       }
     });
 
-    console.log("EasyMCP created with tools:", this.toolManager.list());
-
-    // Start serving
-    // this.serve();
+    this.serve();
   }
 }

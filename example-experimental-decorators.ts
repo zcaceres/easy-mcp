@@ -1,16 +1,20 @@
-import EasyMCP from "./EasyMCP";
-import { Prompt } from "./decorators/Prompt";
-import { Resource } from "./decorators/Resource";
-import { Root } from "./decorators/Root";
-import { Tool } from "./decorators/Tool";
+import EasyMCP from "./lib/EasyMCP";
+import { Prompt } from "./lib/decorators/Prompt";
+import { Resource } from "./lib/decorators/Resource";
+import { Root } from "./lib/decorators/Root";
+import { Tool } from "./lib/decorators/Tool";
 
 @Root({
-  uri: "my sample root",
+  uri: "/my-sample-dir/photos",
+})
+@Root({
+  uri: "/my-root-dir",
+  name: "My laptop's root directory",
 })
 class ZachsMCP extends EasyMCP {
   @Tool({})
-  addNum({ name, age }: { name: string; age: number }) {
-    console.log(`${name} of ${age} age`);
+  addNum(name: string, age: number) {
+    return `${name} of ${age} age`;
   }
 
   @Tool({
@@ -45,12 +49,4 @@ class ZachsMCP extends EasyMCP {
 }
 
 const mcp = new ZachsMCP({ version: "1.0.0" });
-
-mcp.root({
-  uri: "/",
-  resource: "hello",
-});
-
-mcp.serve();
-
-console.dir(mcp);
+console.log(mcp.name, "is now serving!");

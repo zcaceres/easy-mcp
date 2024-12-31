@@ -1,12 +1,17 @@
 # easy-mcp
 
-> EasyMCP is in beta, with a first release coming in January 2025. Please report any issues you encounter.
+> EasyMCP is usable but in beta. Please report any issues you encounter.
 
 Easy MCP is the simplest way to create Model Context Protocol (MCP) servers in TypeScript.
 
-It hides the plumbing and definitions behind simple, easy-to-use functions, allowing you to focus on building your server. Easy MCP strives to mimic the syntax of popular server frameworks like Express, making it easy to get started.
+It hides the plumbing, formatting, and other boilerplate definitions behind simple decorators that wrap a function.
 
 Easy MCP allows you to define the bare minimum of what you need to get started, or you can define more complex resources, templates, tools, and prompts.
+
+## Features
+
+- Define @Tools, @Prompts, @Resources, and @Roots with one call to a decorator. Every possible parameter that could be optional is optional and hidden unless you need it.
+- Automagically infers tool, prompt, and resource arguments. No input schema definition required!
 
 ## Installation
 
@@ -24,10 +29,71 @@ bun add easy-mcp
 
 ## Limitations
 
-- No support for sampling
-- No support for SSE
+- No support for logging, yet
+- No support for sampling, yet
+- No support for SSE, yet
 
-## Usage
+## Usage with Decorator API
+
+This API is simpler and infers types and input configuration automatically. But it's experimental.
+
+```typescript
+import EasyMCP from "./EasyMCP";
+import { Prompt } from "./decorators/Prompt";
+import { Resource } from "./decorators/Resource";
+import { Root } from "./decorators/Root";
+import { Tool } from "./decorators/Tool";
+
+@Root({
+  uri: "/my-sample-dir/photos",
+})
+@Root({
+  uri: "/my-root-dir",
+  name: "My laptop's root directory",
+})
+class ZachsMCP extends EasyMCP {
+  @Tool({})
+  addNum(name: string, age: number) {
+    return `${name} of ${age} age`;
+  }
+
+  @Tool({
+    description: "A function with various parameter types",
+    optionalParameters: ["active", "items", "age"],
+  })
+  exampleFunc(name: string, active?: string, items?: string[], age?: number) {
+    return `exampleFunc called: name ${name}, active ${active}, items ${items}, age ${age}`;
+  }
+
+  @Resource({
+    uri: "hello-world",
+  })
+  helloWorld() {
+    return "Hello, world!";
+  }
+
+  @Resource({
+    uriTemplate: "greeting/{name}",
+  })
+  greeting(name: string) {
+    return `Hello, ${name}!`;
+  }
+
+  @Prompt({
+    name: "prompt test",
+    description: "test",
+  })
+  myPrompt(name: string) {
+    return `Prompting... ${name}`;
+  }
+}
+
+const mcp = new ZachsMCP({ version: "1.0.0" });
+console.log(mcp.name, "is now serving!");
+```
+
+
+## Usage with Express-like API
 
 Here's a basic example of how to use easy-mcp:
 

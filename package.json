@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "bun run index.ts",
+    "start:decorators": "bun run example-experimental-decorators.ts",
     "dev": "bun --watch index.ts"
   },
   "devDependencies": {

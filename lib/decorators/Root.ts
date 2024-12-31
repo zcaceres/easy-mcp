@@ -1,33 +1,21 @@
-import type { Root } from "@modelcontextprotocol/sdk/types.js";
-import { metadataKey } from "../MagicConfig";
+/**
+ * All other decorators wrap instance methods. This decorator wraps the class itself because Roots do not have logic or function params when they're fulfilled.
+ */
+export function Root(config: { uri: string; name?: string }) {
+  return function <T extends { new (...args: any[]): {} }>(constructor: T) {
+    if (!constructor.hasOwnProperty("rootConfigs")) {
+      Object.defineProperty(constructor, "rootConfigs", {
+        value: [],
+        writable: true,
+        configurable: true,
+      });
+    }
 
-export function Root(config: { uri: string }) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor,
-  ) {
-    const originalMethod = descriptor.value;
-
-    const rootConfig: Root = {
-      name: propertyKey,
+    (constructor as any).rootConfigs.push({
       uri: config.uri,
-    };
+      name: config.name || constructor.name,
+    });
 
-    /**
-    We add the Root configuration to the original method so that it lives on the functions prototype.
-
-    When we instantiate the class later, we have access to this config which we can then use to register the Root with the Root Manager.
-    */
-
-    if (!originalMethod[metadataKey]) {
-      originalMethod[metadataKey] = {};
-    }
-
-    if (rootConfig) {
-      originalMethod[metadataKey].rootConfig = rootConfig;
-    }
-
-    return descriptor;
+    return constructor;
   };
 }
