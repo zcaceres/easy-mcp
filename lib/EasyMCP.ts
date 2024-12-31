@@ -277,24 +277,31 @@ export default class EasyMCP extends BaseMCP {
       );
 
     childMethods.forEach((method) => {
+      // Assuming the decorator has been run to wrap these functions, we should have one of these configs on the relevant method.
       if (this[method][metadataKey].toolConfig) {
         this.tool(this[method][metadataKey].toolConfig);
+      }
+
+      if (this[method][metadataKey].promptConfig) {
+        this.prompt(this[method][metadataKey].promptConfig);
+      }
+
+      if (this[method][metadataKey].rootConfig) {
+        this.root(this[method][metadataKey].rootConfig);
+      }
+
+      if (this[method][metadataKey].resourceConfig) {
+        this.resource(this[method][metadataKey].resourceConfig);
+      }
+
+      if (this[method][metadataKey].resourceTemplateConfig) {
+        this.template(this[method][metadataKey].resourceTemplateConfig);
       }
     });
 
     console.log("EasyMCP created with tools:", this.toolManager.list());
-  }
 
-  static serve({
-    version,
-    description,
-  }: {
-    version: Version;
-    description?: string;
-  }) {
-    return new EasyMCP({
-      version,
-      description,
-    });
+    // Start serving
+    // this.serve();
   }
 }

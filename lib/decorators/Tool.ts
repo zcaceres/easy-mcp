@@ -21,7 +21,12 @@ export function Tool(config: FunctionConfig) {
         required: !param.optional,
       })),
       // MCP passes in an arguments OBJECT to the function, so we need to convert that back to the parameters the function expects.
-      fn: (argsObject) => originalMethod(...Object.values(argsObject)),
+      fn: (argsObject) => {
+        if (argsObject) {
+          return originalMethod(...Object.values(argsObject));
+        }
+        return originalMethod();
+      },
     };
 
     /**

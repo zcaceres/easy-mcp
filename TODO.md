@@ -1,16 +1,14 @@
 ## TODO
 
-<<<<<<< Updated upstream
+NEXT:
+Parameters are not passing correctly to the function. Need to fix this.
 
-
-What's the point?
-- hide input configuration!
-  - if we can do this, we can end up hiding a lot of configuration in general
-
-
-1. I add the @Tool decorator
-  This runs at runtime and executes BEFORE the inner function does
-2. I get a fully configured tool added to the ToolManager
+2. Add root decorator
+3. Figure out function sig for each decorator to make as much optional as possible
+4. Add description
+5. Make sure people don't pass objects as args to the functions that are decorated. This is critical.
+6. Clean up
+  - old prompt api should be inputs not args
 
 
 
@@ -27,7 +25,6 @@ What's the point?
 
 2. Conversion and formatting of messages and responses
 
-||||||| Stash base
 3. list capabilities based on what has been registered
 =======
 3. list capabilities based on what has been registered

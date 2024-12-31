@@ -1,12 +1,10 @@
-import { MagicInference } from "../MagicConfig";
+import { extractFunctionMetadata, metadataKey } from "../MagicConfig";
 import type {
   FunctionConfig,
   MimeTypes,
   ResourceConfig,
   ResourceTemplateConfig,
 } from "../../types";
-import BaseMCP from "../EasyMCP";
-import { getFunctionMetadata } from "../Metadata";
 
 type ResourceDecoratorConfig = FunctionConfig &
   (
@@ -20,58 +18,65 @@ export function Resource(config: ResourceDecoratorConfig) {
     propertyKey: string,
     descriptor: PropertyDescriptor,
   ) {
-    // Apply MagicInference decorator
-    MagicInference(config)(target, propertyKey, descriptor);
-
-    // Get the original method
     const originalMethod = descriptor.value;
 
-    // Replace the method with a new one that registers the resource or template
-    descriptor.value = function (...args: any[]) {
-      // Get the metadata added by MagicInference
-      const metadata = getFunctionMetadata(this, originalMethod);
+    const metadata = extractFunctionMetadata(target, propertyKey, config);
 
-      if (!metadata) {
-        throw new Error("Metadata not found for the decorated method");
-      }
+    let resourceConfig: ResourceConfig | null = null;
+    let templateConfig: ResourceTemplateConfig | null = null;
 
-      if (this instanceof BaseMCP) {
-        if ("uri" in config) {
-          // Create a ResourceConfig object
-          const resourceConfig: ResourceConfig = {
-            uri: config.uri,
-            name: metadata.name,
-            description: metadata.description || "",
-            mimeType: config.mimeType || ("text/plain" as const),
-            fn: originalMethod.bind(this),
-          };
+    if ("uri" in config) {
+      resourceConfig = {
+        uri: config.uri,
+        name: metadata.name,
+        description: metadata.description || "",
+        mimeType: config.mimeType || ("text/plain" as const),
+        // MCP passes in an arguments OBJECT to the function, so we need to convert that back to the parameters the function expects.
+        fn: (argsObject) => {
+          if (argsObject) {
+            return originalMethod(...Object.values(argsObject));
+          }
+          return originalMethod();
+        },
+      };
+    } else if ("uriTemplate" in config) {
+      // Create a ResourceTemplateConfig object
+      templateConfig = {
+        uriTemplate: config.uriTemplate,
+        name: metadata.name,
+        description: metadata.description || "",
+        mimeType: config.mimeType || ("text/plain" as const),
+        // MCP passes in an arguments OBJECT to the function, so we need to convert that back to the parameters the function expects.
+        fn: (argsObject) => {
+          if (argsObject) {
+            return originalMethod(...Object.values(argsObject));
+          }
+          return originalMethod();
+        },
+      };
+    } else {
+      throw new Error(
+        "Invalid resource config passed to Decorator. Must have either uri or uriTemplate.",
+      );
+    }
 
-          // Add the resource to the ResourceManager
-          this.resourceManager.addResource(resourceConfig);
-        } else if ("uriTemplate" in config) {
-          // Create a ResourceTemplateConfig object
-          const templateConfig: ResourceTemplateConfig = {
-            uriTemplate: config.uriTemplate,
-            name: metadata.name,
-            description: metadata.description || "",
-            mimeType: config.mimeType || ("text/plain" as const),
-            fn: originalMethod.bind(this),
-          };
+    /**
+    We add the Resource configuration to the original method so that it lives on the functions prototype.
 
-          // Add the resource template to the ResourceManager
-          this.resourceManager.addTemplate(templateConfig);
-        } else {
-          throw new Error("Invalid Resource decorator configuration");
-        }
-      } else {
-        console.warn(
-          "The @Resource decorator should be used within a BaseMCP class",
-        );
-      }
+    When we instantiate the class later, we have access to this config which we can then use to register the Resource with the Resource Manager.
+    */
 
-      // Call the original method
-      return originalMethod.apply(this, args);
-    };
+    if (!originalMethod[metadataKey]) {
+      originalMethod[metadataKey] = {};
+    }
+
+    if (resourceConfig) {
+      originalMethod[metadataKey].resourceConfig = resourceConfig;
+    }
+
+    if (templateConfig) {
+      originalMethod[metadataKey].resourceTemplateConfig = templateConfig;
+    }
 
     return descriptor;
   };
