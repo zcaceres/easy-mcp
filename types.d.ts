@@ -173,6 +173,7 @@ export type MimeTypes =
 export interface ParameterMetadata {
   name: string;
   type: "string" | "number" | "object" | "array";
+  description?: string;
   optional?: boolean;
 }
 
@@ -181,7 +182,7 @@ export interface FunctionConfig {
   description?: string;
   version?: number;
   parameters?: ParameterMetadata[];
-  optionalParameters?: string[];
+  optionals?: string[];
 }
 
 export interface FunctionMetadata {
@@ -189,6 +190,6 @@ export interface FunctionMetadata {
   description: string;
   version?: number;
   parameters: ParameterMetadata[];
-  optionalParameters?: string[];
+  optionals?: string[];
   [key: string]: any;
 }

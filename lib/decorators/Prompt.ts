@@ -1,7 +1,7 @@
-import type { FunctionConfig, PromptConfig } from "../../types";
+import type { PromptConfig, PromptDefinition } from "../../types";
 import { extractFunctionMetadata, metadataKey } from "../MagicConfig";
 
-export function Prompt(config: FunctionConfig) {
+export function Prompt(config?: PromptDefinition) {
   return function (
     target: any,
     propertyKey: string,
@@ -9,13 +9,15 @@ export function Prompt(config: FunctionConfig) {
   ) {
     const originalMethod = descriptor.value;
 
-    const metadata = extractFunctionMetadata(target, propertyKey, config);
+    const metadata = extractFunctionMetadata(target, propertyKey, config || {});
 
-    // Create a PromptConfig object
+    // If overrides exist, then use them. Otherwise infer.
+    const inputParamsSource = config?.args ? config.args : metadata.parameters;
+
     const promptConfig: PromptConfig = {
-      name: metadata.name,
-      description: metadata.description || "",
-      args: metadata.parameters.map((param) => ({
+      name: config?.name || metadata.name,
+      description: config?.description || metadata.description || `a prompt`,
+      args: inputParamsSource.map((param) => ({
         name: param.name,
         // In the MCP TS SDK prompt arguments do not have a type, so we don't worry about it here!
         description: "", // You might want to add a way to specify parameter descriptions

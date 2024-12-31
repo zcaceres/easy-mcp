@@ -1,7 +1,7 @@
 import type { FunctionConfig, ToolConfig } from "../../types";
 import { extractFunctionMetadata, metadataKey } from "../MagicConfig";
 
-export function Tool(config: FunctionConfig) {
+export function Tool(config?: FunctionConfig) {
   return function (
     target: any,
     propertyKey: string,
@@ -9,15 +9,28 @@ export function Tool(config: FunctionConfig) {
   ) {
     const originalMethod = descriptor.value;
 
-    const metadata = extractFunctionMetadata(target, propertyKey, config);
+    const metadata = extractFunctionMetadata(target, propertyKey, config || {});
+
+    if (!config) {
+      config = {
+        name: propertyKey,
+        description: `A tool that accepts parameters: ${metadata.parameters.map((param) => `${param.name} of type ${param.type}`)}`,
+      };
+    }
+
+    const inputConfigSource = config.parameters
+      ? config.parameters
+      : metadata.parameters;
 
     const toolConfig: ToolConfig = {
       name: propertyKey,
       description: config.description || "",
-      inputs: metadata.parameters.map((param) => ({
+      inputs: inputConfigSource.map((param) => ({
         name: param.name,
         type: param.type,
-        description: `a ${param.name} of type ${param.type}`, // FIXME
+        description:
+          param.description ||
+          `a param named ${param.name} of type ${param.type}`,
         required: !param.optional,
       })),
       // MCP passes in an arguments OBJECT to the function, so we need to convert that back to the parameters the function expects.

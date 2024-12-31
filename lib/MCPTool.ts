@@ -41,7 +41,6 @@ class MCPTool {
   }
 
   static create(config: ToolConfig) {
-    const parsedFn = {};
     return new MCPTool({
       name: config.name,
       description: config.description,

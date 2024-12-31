@@ -10,7 +10,7 @@ class TestMCP extends BaseMCP {
 
   @Tool({
     description: "A function with various parameter types",
-    optionalParameters: ["active", "items", "age"],
+    optionals: ["active", "items", "age"],
   })
   exampleFunc(name: string, active?: string, items?: string[], age?: number) {
     return `exampleFunc called: ${name}, ${active}, ${items}, ${age}`;

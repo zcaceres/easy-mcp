@@ -1,18 +1,14 @@
 import { extractFunctionMetadata, metadataKey } from "../MagicConfig";
 import type {
-  FunctionConfig,
-  MimeTypes,
   ResourceConfig,
+  ResourceDefinition,
   ResourceTemplateConfig,
 } from "../../types";
 
-type ResourceDecoratorConfig = FunctionConfig &
-  (
-    | { uri: string; mimeType?: MimeTypes }
-    | { uriTemplate: string; mimeType?: MimeTypes }
-  );
-
-export function Resource(config: ResourceDecoratorConfig) {
+export function Resource(
+  uriOrUriTemplate: string,
+  config: Partial<ResourceDefinition> = {},
+) {
   return function (
     target: any,
     propertyKey: string,
@@ -25,26 +21,16 @@ export function Resource(config: ResourceDecoratorConfig) {
     let resourceConfig: ResourceConfig | null = null;
     let templateConfig: ResourceTemplateConfig | null = null;
 
-    if ("uri" in config) {
-      resourceConfig = {
-        uri: config.uri,
-        name: metadata.name,
-        description: metadata.description || "",
-        mimeType: config.mimeType || ("text/plain" as const),
-        // MCP passes in an arguments OBJECT to the function, so we need to convert that back to the parameters the function expects.
-        fn: (argsObject) => {
-          if (argsObject) {
-            return originalMethod(...Object.values(argsObject));
-          }
-          return originalMethod();
-        },
-      };
-    } else if ("uriTemplate" in config) {
+    // Check whether the uri is a uri or a uriTemplate
+    if (uriOrUriTemplate.includes("{")) {
       // Create a ResourceTemplateConfig object
       templateConfig = {
-        uriTemplate: config.uriTemplate,
-        name: metadata.name,
-        description: metadata.description || "",
+        uriTemplate: uriOrUriTemplate,
+        name: config.name || metadata.name,
+        description:
+          config.description ||
+          metadata.description ||
+          `a resource with name ${metadata.name} at uri ${uriOrUriTemplate}`,
         mimeType: config.mimeType || ("text/plain" as const),
         // MCP passes in an arguments OBJECT to the function, so we need to convert that back to the parameters the function expects.
         fn: (argsObject) => {
@@ -55,15 +41,28 @@ export function Resource(config: ResourceDecoratorConfig) {
         },
       };
     } else {
-      throw new Error(
-        "Invalid resource config passed to Decorator. Must have either uri or uriTemplate.",
-      );
+      resourceConfig = {
+        uri: uriOrUriTemplate,
+        name: config.name || metadata.name,
+        description:
+          config.description ||
+          metadata.description ||
+          `a resource with name ${metadata.name} at uri ${uriOrUriTemplate}`,
+        mimeType: config.mimeType || ("text/plain" as const),
+        // MCP passes in an arguments OBJECT to the function, so we need to convert that back to the parameters the function expects.
+        fn: (argsObject) => {
+          if (argsObject) {
+            return originalMethod(...Object.values(argsObject));
+          }
+          return originalMethod();
+        },
+      };
     }
 
     /**
-    We add the Resource configuration to the original method so that it lives on the functions prototype.
+      We add the Resource configuration to the original method so that  it lives on the functions prototype.
 
-    When we instantiate the class later, we have access to this config which we can then use to register the Resource with the Resource Manager.
+      When we instantiate the class later, we have access to this   config which we can then use to register the Resource with the  Resource Manager.
     */
 
     if (!originalMethod[metadataKey]) {

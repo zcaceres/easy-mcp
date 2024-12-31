@@ -1,101 +1,25 @@
 ## TODO
 
 NEXT:
-Parameters are not passing correctly to the function. Need to fix this.
-
-2. Add root decorator
-3. Figure out function sig for each decorator to make as much optional as possible
-4. Add description
-5. Make sure people don't pass objects as args to the functions that are decorated. This is critical.
-6. Clean up
-  - old prompt api should be inputs not args
-
-
-
-1. Finish Magic Config integration
-
-- Subclassing behavior from easy MCP
-  - declare every item as instance method with decorator
-    - @tool
-    - @resource
-    - @prompt
-    - @root
-  - These decorates pull out function params etc and then call the "add" method relevant for their type
-
-
-2. Conversion and formatting of messages and responses
-
-3. list capabilities based on what has been registered
-=======
-3. list capabilities based on what has been registered
-
-- Separate registration of config from the config parsing step.
-- Make it functional
-- No magic input stuff should change the core API of the server and declarations as they are
-
-
->>>>>>> Stashed changes
-1. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
+- Add error to make sure people don't pass objects as args to the functions that are decorated. This is critical.
+- Prompt in theory accepts inputs by the TS types don't suggest it can and it doesn't seem to share them.
+- Conversion and formatting of messages and responses
   - What are the supported data types
-<<<<<<< Updated upstream
-2. Logging and configuration of Logging (see LoggingMessageNotification)
-3. Parse function signature for input arguments
+    Textcontent
+    ImageContent
+    EmbeddedResource
+    PromptMessage
 
-Textcontent
-ImageContent
-EmbeddedResource
-PromptMessage
-
-BlobResourceContents
-TextResourceContents
-ResourceContents
-
-
-||||||| Stash base
-2. Parse function signature for input arguments
-=======
->>>>>>> Stashed changes
-
-```
-Server Class
-  Managers
-    - [X] Resource Manager
-    - [X] Tool Manager
-    Prompt Managers
-    Core Handlers
-    - [X] list resource
-    - [X] read resource
-    - [X] add resource
-    - [] sub
-    - [] unsub
-    - [X] list tools
-    - [X] read tool
-    - [X] add tool
-- [X] call tool
-  - [X] list prompts
-    - [X] get prompt
-```
-
-### Server Concepts
-- [X] customize the transport layer
-- [X] Declare the capabilities of the server in the constructor
-
-
-### Capabilities
-- [X] Tools
-- [X] Prompts
-- [X] Resources
-- [X] Roots
-- [] Conversion flow / message wrappers
-- [] Image conversion
+    BlobResourceContents
+    TextResourceContents
+    ResourceContents
+    - [] Image conversion
+- Logging and configuration of Logging (see LoggingMessageNotification)
+- sub / unsub
 - [] Context Object
    - [] Logging via debug(), info(), warning(), and error()
    - [] Resource access through read_resource()
    - [] Request metadata via request_id and client_id
-
-### Test Coverage
-- [X] Tests on each major capability
-- [] Test with Claude Desktop
 
 ### Example Servers
 - [] Weather

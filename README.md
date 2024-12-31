@@ -33,63 +33,123 @@ bun add easy-mcp
 - No support for sampling, yet
 - No support for SSE, yet
 
-## Usage with Decorator API
+## Usage with (Experimental) Decorators API
 
-This API is simpler and infers types and input configuration automatically. But it's experimental.
+This API is simpler and infers types and input configuration automatically. But it's experimental and may change or have not-yet-discovered problems.
 
 ```typescript
-import EasyMCP from "./EasyMCP";
-import { Prompt } from "./decorators/Prompt";
-import { Resource } from "./decorators/Resource";
-import { Root } from "./decorators/Root";
-import { Tool } from "./decorators/Tool";
+import EasyMCP from "./lib/EasyMCP";
+import { Prompt } from "./lib/decorators/Prompt";
+import { Resource } from "./lib/decorators/Resource";
+import { Root } from "./lib/decorators/Root";
+import { Tool } from "./lib/decorators/Tool";
 
-@Root({
-  uri: "/my-sample-dir/photos",
-})
-@Root({
-  uri: "/my-root-dir",
-  name: "My laptop's root directory",
-})
+@Root("/my-sample-dir/photos")
+// Optionally include a name for the Root
+@Root("/my-root-dir", { name: "My laptop's root directory" })
 class ZachsMCP extends EasyMCP {
-  @Tool({})
-  addNum(name: string, age: number) {
-    return `${name} of ${age} age`;
+  /**
+  You can declare a with zero configuration. Relevant types and plumbing will be inferred and handled.
+
+  By default, the *name* of the Tool will be the name of the method.
+  */
+  @Tool()
+  simpleFunc(nickname: string, height: number) {
+    return `${nickname} of ${height} height`;
   }
 
+  /**
+   * You can enhance a tool with optional data like a description.
+
+   Due to limitations in Typescript, if you want the Tool to serialize certain inputs as optional to the Client, you need to provide an optionals list.
+   */
   @Tool({
-    description: "A function with various parameter types",
-    optionalParameters: ["active", "items", "age"],
+    description: "An optional description",
+    optionals: ["active", "items", "age"],
   })
-  exampleFunc(name: string, active?: string, items?: string[], age?: number) {
+  middleFunc(name: string, active?: string, items?: string[], age?: number) {
     return `exampleFunc called: name ${name}, active ${active}, items ${items}, age ${age}`;
   }
 
-  @Resource({
-    uri: "hello-world",
+  /**
+   * You can also provide a schema for the input arguments of a tool, if you want full control.
+   */
+  @Tool({
+    description: "A function with various parameter types",
+    parameters: [
+      {
+        name: "date",
+        type: "string",
+        optional: false,
+      },
+      {
+        name: "season",
+        type: "string",
+        optional: false,
+      },
+      {
+        name: "year",
+        type: "number",
+        optional: true,
+      },
+    ],
   })
-  helloWorld() {
+  complexTool(date: string, season: string, year?: number) {
+    return `complexTool called: date ${date}, season ${season}, year ${year}`;
+  }
+
+  /**
+   * Resources can be declared with a simple URI.
+
+   By default, the name of the resource will be the name of the method.
+   */
+  @Resource("simple-resource")
+  simpleResource() {
     return "Hello, world!";
   }
 
-  @Resource({
-    uriTemplate: "greeting/{name}",
-  })
-  greeting(name: string) {
+  /**
+   * Or include handlebars which EasyMCP will treat as a Resource Template.
+
+   Both Resources and Resource Templates can be configured with optional data like a description.
+   */
+  @Resource("greeting/{name}")
+  myResourceTemplate(name: string) {
     return `Hello, ${name}!`;
   }
 
+  /**
+   * By default, prompts need no configuration.
+
+   They will be named after the method they decorate.
+   */
+  @Prompt()
+  simplePrompt(name: string) {
+    return `Prompting... ${name}`;
+  }
+
+  /**
+   * Or you can override and configure a Prompt with a name, description, and explicit arguments.
+   */
   @Prompt({
-    name: "prompt test",
-    description: "test",
+    name: "configured-prompt",
+    description: "A prompt with a name and description",
+    args: [
+      {
+        name: "name",
+        description: "The name of the thing to prompt",
+        required: true,
+      },
+    ],
   })
-  myPrompt(name: string) {
+  configuredPrompt(name: string) {
     return `Prompting... ${name}`;
   }
 }
 
 const mcp = new ZachsMCP({ version: "1.0.0" });
 console.log(mcp.name, "is now serving!");
+
 ```
 
 

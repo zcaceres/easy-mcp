@@ -23,8 +23,8 @@ export function extractFunctionMetadata(
 
   const parameters: ParameterMetadata[] = parameterTypes.map((type, index) => {
     const paramName = parameterNames[index] || `arg${index}`;
-    const isOptional = config.optionalParameters
-      ? config.optionalParameters.includes(paramName)
+    const isOptional = config.optionals
+      ? config.optionals.includes(paramName)
       : false;
 
     return {
