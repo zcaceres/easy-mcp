@@ -18,18 +18,23 @@ export function Tool(config: FunctionConfig) {
       inputs: metadata.parameters.map((param) => ({
         name: param.name,
         type: param.type,
-        description: "", // FIXME
+        description: `a ${param.name} of type ${param.type}`, // FIXME
         required: !param.optional,
       })),
       fn: originalMethod,
     };
 
-    if (!target.constructor.prototype.tools) {
-      target.constructor.prototype.REGISTERED_TOOLS = [];
-    }
-    target.constructor.prototype.REGISTERED_TOOLS.push(toolConfig);
+    /**
+    We add the tool configuration to the original method so that it lives on the functions prototype.
 
-    // The descriptor value remains the original method
+    When we instantiate the class later, we have access to this config which we can then use to register the tool with the Tool Manager.
+    */
+    if (!originalMethod[metadataKey]) {
+      originalMethod[metadataKey] = {};
+    }
+    originalMethod[metadataKey].toolConfig = toolConfig;
+
+    // The function itself remains unchanged, except for the metadata we attached to it.
     return descriptor;
   };
 }

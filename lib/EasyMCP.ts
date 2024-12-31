@@ -5,6 +5,7 @@ import type {
   ResourceTemplateConfig,
   ServerOptions,
   ToolConfig,
+  Version,
 } from "../types";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import ResourceManager, {
@@ -35,8 +36,9 @@ import {
 import ToolManager from "./ToolManager";
 import PromptManager from "./PromptManager";
 import RootsManager from "./RootsManager";
+import { metadataKey } from "./MagicConfig";
 
-abstract class BaseMCP {
+class BaseMCP {
   name: string;
   opts: ServerOptions;
   resourceManager: ResourceManager;
@@ -248,22 +250,51 @@ abstract class BaseMCP {
     console.log("Registered ListRoots endpoint");
   }
 
-  // static create(name: string, opts: ServerOptions) {
-  //   return new BaseMCP(name, opts);
-  // }
+  static create(name: string, opts: ServerOptions) {
+    return new BaseMCP(name, opts);
+  }
 }
 
 export default class EasyMCP extends BaseMCP {
-  constructor() {
-    super("", {});
-    this.REGISTERED_TOOLS.forEach((tool) => {
-      this.tool(tool);
+  constructor({
+    version,
+    description,
+  }: {
+    version: Version;
+    description?: string;
+  }) {
+    // This call should initialize all the managers
+    super("", { version, description });
+    this.name = this.constructor.name;
+
+    const childMethods = Object.getOwnPropertyNames(Object.getPrototypeOf(this))
+      .filter((method) => typeof this[method] === "function")
+      .filter(
+        (method) =>
+          !Object.getOwnPropertyNames(
+            Object.getPrototypeOf(BaseMCP.prototype),
+          ).includes(method),
+      );
+
+    childMethods.forEach((method) => {
+      if (this[method][metadataKey].toolConfig) {
+        this.tool(this[method][metadataKey].toolConfig);
+      }
     });
+
+    console.log("EasyMCP created with tools:", this.toolManager.list());
   }
 
-  // static serve({ version, description }) {
-  //   return new EasyMCP({
-  //     version,
-  //     description,
-  // }
+  static serve({
+    version,
+    description,
+  }: {
+    version: Version;
+    description?: string;
+  }) {
+    return new EasyMCP({
+      version,
+      description,
+    });
+  }
 }

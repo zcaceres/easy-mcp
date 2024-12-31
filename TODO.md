@@ -1,5 +1,6 @@
 ## TODO
 
+<<<<<<< Updated upstream
 
 
 What's the point?
@@ -26,8 +27,20 @@ What's the point?
 
 2. Conversion and formatting of messages and responses
 
+||||||| Stash base
+3. list capabilities based on what has been registered
+=======
+3. list capabilities based on what has been registered
+
+- Separate registration of config from the config parsing step.
+- Make it functional
+- No magic input stuff should change the core API of the server and declarations as they are
+
+
+>>>>>>> Stashed changes
 1. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
   - What are the supported data types
+<<<<<<< Updated upstream
 2. Logging and configuration of Logging (see LoggingMessageNotification)
 3. Parse function signature for input arguments
 
@@ -41,6 +54,10 @@ TextResourceContents
 ResourceContents
 
 
+||||||| Stash base
+2. Parse function signature for input arguments
+=======
+>>>>>>> Stashed changes
 
 ```
 Server Class

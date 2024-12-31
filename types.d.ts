@@ -4,8 +4,11 @@ import type {
   Tool,
 } from "@modelcontextprotocol/sdk/types.js";
 
+export type Version = `${number}.${number}.${number}`;
+
 export type ServerOptions = {
-  version: `${number}.${number}.${number}`;
+  version: Version;
+  description?: string;
 };
 
 export type ToolInputSchema = {
