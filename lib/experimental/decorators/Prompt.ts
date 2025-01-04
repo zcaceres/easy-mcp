@@ -1,4 +1,4 @@
-import type { PromptConfig, PromptDefinition } from "../../types";
+import type { PromptConfig, PromptDefinition } from "../../../types";
 import { extractFunctionMetadata, metadataKey } from "../MagicConfig";
 
 export function Prompt(config?: PromptDefinition) {

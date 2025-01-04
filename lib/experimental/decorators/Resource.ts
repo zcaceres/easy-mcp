@@ -3,7 +3,7 @@ import type {
   ResourceConfig,
   ResourceDefinition,
   ResourceTemplateConfig,
-} from "../../types";
+} from "../../../types";
 
 export function Resource(
   uriOrUriTemplate: string,

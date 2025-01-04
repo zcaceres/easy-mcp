@@ -1,8 +1,8 @@
 import EasyMCP from "./lib/EasyMCP";
-import { Prompt } from "./lib/decorators/Prompt";
-import { Resource } from "./lib/decorators/Resource";
-import { Root } from "./lib/decorators/Root";
-import { Tool } from "./lib/decorators/Tool";
+import { Prompt } from "./lib/experimental/decorators/Prompt";
+import { Resource } from "./lib/experimental/decorators/Resource";
+import { Root } from "./lib/experimental/decorators/Root";
+import { Tool } from "./lib/experimental/decorators/Tool";
 
 @Root("/my-sample-dir/photos")
 // Optionally include a name for the Root

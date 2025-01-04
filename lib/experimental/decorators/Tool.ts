@@ -1,4 +1,4 @@
-import type { FunctionConfig, ToolConfig } from "../../types";
+import type { FunctionConfig, ToolConfig } from "../../../types";
 import { extractFunctionMetadata, metadataKey } from "../MagicConfig";
 
 export function Tool(config?: FunctionConfig) {

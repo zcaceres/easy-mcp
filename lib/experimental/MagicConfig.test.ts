@@ -1,13 +1,9 @@
-import { describe, expect, test, jest, beforeEach } from "bun:test";
-import BaseMCP from "./EasyMCP";
+import { describe, expect, spyOn, test, beforeEach } from "bun:test";
 import { Tool } from "./decorators/Tool";
-import ToolManager from "./ToolManager";
+import ToolManager from "../ToolManager";
+import EasyMCP from "../EasyMCP";
 
-class TestMCP extends BaseMCP {
-  constructor() {
-    super("TestMCP", { version: "1.0.0" });
-  }
-
+class TestMCP extends EasyMCP {
   @Tool({
     description: "A function with various parameter types",
     optionals: ["active", "items", "age"],
@@ -21,7 +17,7 @@ describe("Tool Decorator", () => {
   let mcp: TestMCP;
 
   beforeEach(() => {
-    mcp = new TestMCP();
+    mcp = new TestMCP({ version: "1.0.0" });
   });
 
   test("Tool is added to ToolManager upon class instantiation", () => {
@@ -43,42 +39,38 @@ describe("Tool Decorator", () => {
     expect(exampleTool.description).toBe(
       "A function with various parameter types",
     );
-    expect(exampleTool.inputs).toHaveLength(4);
-    expect(exampleTool.inputs[0]).toEqual({
-      name: "name",
-      type: "string",
-      description: "",
-      required: true,
-    });
-    expect(exampleTool.inputs[1]).toEqual({
-      name: "active",
-      type: "string",
-      description: "",
-      required: false,
-    });
-    expect(exampleTool.inputs[2]).toEqual({
-      name: "items",
-      type: "array",
-      description: "",
-      required: false,
-    });
-    expect(exampleTool.inputs[3]).toEqual({
-      name: "age",
-      type: "number",
-      description: "",
-      required: false,
-    });
+    expect(Object.values(exampleTool.inputSchema.properties)).toHaveLength(4);
+
+    expect(exampleTool.inputSchema.properties["name"].type).toBe("string");
+    expect(exampleTool.inputSchema.properties["name"].description).toBe(
+      "a param named name of type string",
+    );
+
+    expect(exampleTool.inputSchema.properties["active"].type).toBe("string");
+    expect(exampleTool.inputSchema.properties["active"].description).toBe(
+      "a param named active of type string",
+    );
+
+    expect(exampleTool.inputSchema.properties["items"].type).toBe("array");
+    expect(exampleTool.inputSchema.properties["items"].description).toBe(
+      "a param named items of type array",
+    );
+
+    expect(exampleTool.inputSchema.properties["age"].type).toBe("number");
+    expect(exampleTool.inputSchema.properties["age"].description).toBe(
+      "a param named age of type number",
+    );
   });
 
   test("ToolManager.add is called immediately when decorator is applied", () => {
-    const addSpy = jest.spyOn(ToolManager.prototype, "add");
+    const addSpy = spyOn(ToolManager.prototype, "add");
 
-    class SpyTestMCP extends BaseMCP {
+    class SpyTestMCP extends EasyMCP {
       @Tool()
       spyMethod() {}
     }
 
-    new SpyTestMCP("SpyTestMCP", { version: "1.0.0" });
+    new SpyTestMCP({ version: "1.0.0" });
 
     expect(addSpy).toHaveBeenCalledTimes(1);
     expect(addSpy).toHaveBeenCalledWith(

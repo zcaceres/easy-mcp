@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import type { FunctionConfig, ParameterMetadata } from "../types";
+import type { FunctionConfig, ParameterMetadata } from "../../types";
 
 export const metadataKey = Symbol("functionMetadata");
 

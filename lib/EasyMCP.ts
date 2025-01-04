@@ -39,7 +39,7 @@ import {
 import ToolManager from "./ToolManager";
 import PromptManager from "./PromptManager";
 import RootsManager from "./RootsManager";
-import { metadataKey } from "./MagicConfig";
+import { metadataKey } from "./experimental/MagicConfig";
 import LogFormatter from "./LogFormatter";
 
 class BaseMCP {
@@ -146,112 +146,120 @@ class BaseMCP {
       throw new Error("Server not initialized. Call serve() first.");
     }
 
-    // Resources
-    this.server.setRequestHandler(
-      ListResourcesRequestSchema,
-      async (): Promise<ListResourcesResult> => {
-        return { resources: this.resourceManager.listResources() };
-      },
-    );
-    console.log("Registered ListResources endpoint");
+    if (this.server.getClientCapabilities()?.resources) {
+      // Resources
+      this.server.setRequestHandler(
+        ListResourcesRequestSchema,
+        async (): Promise<ListResourcesResult> => {
+          return { resources: this.resourceManager.listResources() };
+        },
+      );
+      console.log("Registered ListResources endpoint");
 
-    this.server.setRequestHandler(
-      ListResourceTemplatesRequestSchema,
-      async (): Promise<ListResourceTemplatesResult> => {
-        return { resourceTemplates: this.resourceManager.listTemplates() };
-      },
-    );
+      this.server.setRequestHandler(
+        ListResourceTemplatesRequestSchema,
+        async (): Promise<ListResourceTemplatesResult> => {
+          return { resourceTemplates: this.resourceManager.listTemplates() };
+        },
+      );
 
-    this.server.setRequestHandler(
-      ReadResourceRequestSchema,
-      async (request: ReadResourceRequest): Promise<ReadResourceResult> => {
-        try {
-          const resourceResult = await this.resourceManager.get(
-            request.params.uri,
-          );
-          return resourceResult;
-        } catch (e) {
-          if (e instanceof ResourceNotFoundError) {
-            return {
-              contents: [
-                {
-                  uri: request.params.uri,
-                  mimeType: "text/plain",
-                  text: "Resource not found",
-                },
-              ],
-            };
+      this.server.setRequestHandler(
+        ReadResourceRequestSchema,
+        async (request: ReadResourceRequest): Promise<ReadResourceResult> => {
+          try {
+            const resourceResult = await this.resourceManager.get(
+              request.params.uri,
+            );
+            return resourceResult;
+          } catch (e) {
+            if (e instanceof ResourceNotFoundError) {
+              return {
+                contents: [
+                  {
+                    uri: request.params.uri,
+                    mimeType: "text/plain",
+                    text: "Resource not found",
+                  },
+                ],
+              };
+            }
+            throw new ResourceError((e as unknown as Error).message);
           }
-          throw new ResourceError((e as unknown as Error).message);
-        }
-      },
-    );
-    console.log("Registered ReadResource endpoint");
+        },
+      );
+      console.log("Registered ReadResource endpoint");
+    }
 
-    // Tools
-    this.server.setRequestHandler(
-      ListToolsRequestSchema,
-      async (): Promise<ListToolsResult> => {
-        return { tools: this.toolManager.list() };
-      },
-    );
-    console.log("Registered ListTools endpoint");
+    if (this.server.getClientCapabilities()?.tools) {
+      // Tools
+      this.server.setRequestHandler(
+        ListToolsRequestSchema,
+        async (): Promise<ListToolsResult> => {
+          return { tools: this.toolManager.list() };
+        },
+      );
+      console.log("Registered ListTools endpoint");
 
-    this.server.setRequestHandler(
-      CallToolRequestSchema,
-      async ({ params }): Promise<CallToolResult> => {
-        const result = await this.toolManager.call(
-          params.name,
-          params.arguments,
-        );
-        return {
-          content: [
-            {
-              type: "text",
-              text: result,
-            },
-          ],
-        };
-      },
-    );
-    console.log("Registered CallTool endpoint");
+      this.server.setRequestHandler(
+        CallToolRequestSchema,
+        async ({ params }): Promise<CallToolResult> => {
+          const result = await this.toolManager.call(
+            params.name,
+            params.arguments,
+          );
+          return {
+            content: [
+              {
+                type: "text",
+                text: result,
+              },
+            ],
+          };
+        },
+      );
+      console.log("Registered CallTool endpoint");
+    }
 
-    // Prompts
-    this.server.setRequestHandler(
-      ListPromptsRequestSchema,
-      async (): Promise<ListPromptsResult> => {
-        return { prompts: this.promptManager.list() };
-      },
-    );
-    console.log("Registered ListPrompts endpoint");
+    if (this.server.getClientCapabilities()?.prompts) {
+      // Prompts
+      this.server.setRequestHandler(
+        ListPromptsRequestSchema,
+        async (): Promise<ListPromptsResult> => {
+          return { prompts: this.promptManager.list() };
+        },
+      );
+      console.log("Registered ListPrompts endpoint");
 
-    this.server.setRequestHandler(
-      GetPromptRequestSchema,
-      async ({ params }): Promise<GetPromptResult> => {
-        const result = await this.promptManager.call(
-          params.name,
-          params.arguments,
-        );
-        return {
-          messages: [
-            {
-              role: "user",
-              content: { type: "text", text: result },
-            },
-          ],
-        };
-      },
-    );
-    console.log("Registered GetPrompt endpoint");
+      this.server.setRequestHandler(
+        GetPromptRequestSchema,
+        async ({ params }): Promise<GetPromptResult> => {
+          const result = await this.promptManager.call(
+            params.name,
+            params.arguments,
+          );
+          return {
+            messages: [
+              {
+                role: "user",
+                content: { type: "text", text: result },
+              },
+            ],
+          };
+        },
+      );
+      console.log("Registered GetPrompt endpoint");
+    }
 
-    // Roots
-    this.server.setRequestHandler(
-      ListRootsRequestSchema,
-      async (): Promise<ListRootsResult> => {
-        return { roots: this.rootsManager.list() };
-      },
-    );
-    console.log("Registered ListRoots endpoint");
+    if (this.server.getClientCapabilities()?.roots) {
+      // Roots
+      this.server.setRequestHandler(
+        ListRootsRequestSchema,
+        async (): Promise<ListRootsResult> => {
+          return { roots: this.rootsManager.list() };
+        },
+      );
+      console.log("Registered ListRoots endpoint");
+    }
   }
 
   sendLog({ level, message }: { level: LoggingLevel; message: string }) {
