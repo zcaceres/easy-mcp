@@ -32,11 +32,15 @@ import {
   type ReadResourceResult,
   type Root,
   type ServerCapabilities,
+  LoggingMessageNotificationSchema,
+  LoggingLevelSchema,
+  type LoggingLevel,
 } from "@modelcontextprotocol/sdk/types.js";
 import ToolManager from "./ToolManager";
 import PromptManager from "./PromptManager";
 import RootsManager from "./RootsManager";
 import { metadataKey } from "./MagicConfig";
+import LogFormatter from "./LogFormatter";
 
 class BaseMCP {
   name: string;
@@ -248,6 +252,17 @@ class BaseMCP {
       },
     );
     console.log("Registered ListRoots endpoint");
+  }
+
+  sendLog({ level, message }: { level: LoggingLevel; message: string }) {
+    if (!this.server) {
+      throw new Error("Server not initialized. Call serve() first.");
+    }
+
+    this.server.sendLoggingMessage({
+      level,
+      message: LogFormatter.format(level, message),
+    });
   }
 
   static create(name: string, opts: ServerOptions) {
