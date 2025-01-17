@@ -13,7 +13,6 @@ NEXT:
     ImageContent
     EmbeddedResource
     PromptMessage
-
     BlobResourceContents
     TextResourceContents
     ResourceContents

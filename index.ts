@@ -19,9 +19,11 @@ mcp.template({
   name: "An optional name", // Optional
   description: "An optional description", // Optional
   mimeType: "text/plain", // Optional
-  fn: addMetadata(async ({ filename, id }) => {
-    return `file://${filename}/${id}.txt`;
-  }),
+  fn: addMetadata(
+    async ({ filename, id }: { filename: string; id: string }) => {
+      return `file://${filename}/${id}.txt`;
+    },
+  ),
 });
 
 function addMetadata(fn: Function) {
