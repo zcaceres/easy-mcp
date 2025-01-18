@@ -27,10 +27,10 @@ Or if you're using bun:
 bun add easy-mcp
 ```
 
-## Limitations
+## Beta Limitations
 
-- No support for logging, yet
-- No support for sampling, yet
+- No support for MCP logging, yet
+- No support for MCP sampling, yet
 - No support for SSE, yet
 
 ## Usage with (Experimental) Decorators API
@@ -155,6 +155,8 @@ console.log(mcp.name, "is now serving!");
 
 ## Usage with Express-like API
 
+This API is more verbose and less magical, but it's more stable and less likely to change.
+
 Here's a basic example of how to use easy-mcp:
 
 ```typescript
@@ -259,7 +261,7 @@ Starts the MCP server.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Just submit a PR.
 
 ## License
 

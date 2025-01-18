@@ -5,8 +5,8 @@ NEXT:
   - configurable logger class w/log levels
   - serializes to client
   - on a context object
-- Add error to make sure people don't pass objects as args to the functions that are decorated. This is critical for the experimental API
-- Prompt in theory accepts inputs by the TS types don't suggest it can and it doesn't seem to share them.
+- For the experimental API: add error to make sure people don't pass objects as args to the functions that are decorated.
+- Prompt in theory accepts inputs but, the TS types don't suggest it can and it doesn't seem to share them.
 - Conversion and formatting of messages and responses
   - What are the supported data types
     Textcontent

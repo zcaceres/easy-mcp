@@ -60,6 +60,16 @@ class BaseMCP {
     this.rootsManager = RootsManager.create();
   }
 
+  listCapabilities() {
+    return {
+      resources: this.resourceManager.listResources(),
+      resourceTemplates: this.resourceManager.listTemplates(),
+      tools: this.toolManager.list(),
+      prompts: this.promptManager.list(),
+      roots: this.rootsManager.list(),
+    };
+  }
+
   registerCapabilities() {
     const capabilities: ServerCapabilities = {};
 
