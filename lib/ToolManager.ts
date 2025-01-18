@@ -1,4 +1,5 @@
 import MCPTool from "./MCPTool";
+import { Context } from "./Context";
 import type { SerializableTool, ToolConfig } from "../types";
 
 export class ToolError extends Error {}
@@ -37,14 +38,18 @@ export default class ToolManager {
     return Object.values(this.tools).map(ToolConverter.toSerializableTool);
   }
 
-  async call(name: string, args?: Record<string, unknown>) {
+  async call(
+    name: string,
+    args?: Record<string, unknown>,
+    context?: Context,
+  ): Promise<any> {
     const foundTool = this.tools[name];
 
     if (!foundTool) {
       throw new ToolNotFoundError();
     }
 
-    const result = await foundTool.callFn(args);
+    const result = await foundTool.callFn(args, context);
     return result;
   }
 

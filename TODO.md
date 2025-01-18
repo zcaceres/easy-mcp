@@ -1,50 +1,21 @@
 ## TODO
 
-3. list capabilities based on what has been registered
-1. The formatting of messages (TS seems less tolerant than Py) probably needs to be hidden inside the Resources and Tools modules.
+NEXT:
+- LOGO
+- GH workflows for releases and test running
+- For the experimental API: add error to make sure people don't pass objects as args to the functions that are decorated.
+- Prompt in theory accepts inputs but, the TS types don't suggest it can and it doesn't seem to share them.
+- Conversion and formatting of messages and responses
   - What are the supported data types
-2. Parse function signature for input arguments
-
-```
-Server Class
-  Managers
-    - [X] Resource Manager
-    - [X] Tool Manager
-    Prompt Managers
-    Core Handlers
-    - [X] list resource
-    - [X] read resource
-    - [X] add resource
-    - [] sub
-    - [] unsub
-    - [X] list tools
-    - [X] read tool
-    - [X] add tool
-- [X] call tool
-  - [X] list prompts
-    - [X] get prompt
-```
-
-### Server Concepts
-- [X] customize the transport layer
-- [X] Declare the capabilities of the server in the constructor
-
-
-### Capabilities
-- [X] Tools
-- [X] Prompts
-- [X] Resources
-- [] Roots
-- [] Conversion flow / message wrappers
-- [] Context Object
-   - [] Logging via debug(), info(), warning(), and error()
-   - [] Resource access through read_resource()
-   - [] Request metadata via request_id and client_id
-- [] Image conversion
-
-### Test Coverage
-- [X] Tests on each major capability
-- [] Test with Claude Desktop
+    Textcontent
+    ImageContent
+    EmbeddedResource
+    PromptMessage
+    BlobResourceContents
+    TextResourceContents
+    ResourceContents
+    - [] Image conversion
+- sub / unsub
 
 ### Example Servers
 - [] Weather
@@ -58,7 +29,5 @@ Server Class
 
 ### Polish
 - [] dependencies
-- [] Can we infer the inputs schema definition just from the type signature of the fn that's passed in when defining a tool?
-
-- [] Samplings (delay)
+- [] Samplings (later)
 - [] SSE

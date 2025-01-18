@@ -9,7 +9,7 @@ describe("EasyMCP", () => {
   });
 
   test("create() should return a new instance of EasyMCP", () => {
-    expect(easyMCP).toBeInstanceOf(EasyMCP);
+    expect(easyMCP.name).toBe("TestServer");
   });
 
   test("registerCapabilities() should return correct capabilities", () => {

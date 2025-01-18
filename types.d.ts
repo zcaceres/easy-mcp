@@ -4,8 +4,11 @@ import type {
   Tool,
 } from "@modelcontextprotocol/sdk/types.js";
 
+export type Version = `${number}.${number}.${number}`;
+
 export type ServerOptions = {
-  version: `${number}.${number}.${number}`;
+  version: Version;
+  description?: string;
 };
 
 export type ToolInputSchema = {
@@ -29,7 +32,11 @@ export type ToolDefinition = {
   };
 };
 
-export type FulfillmentFn = (...args: any[]) => Promise<any>;
+export type FulfillmentFn = (...args: any) => Promise<any>;
+export type ToolCallFulfillmentFn = (
+  ...args: any,
+  context: Context,
+) => Promise<any>;
 
 export type ToolConfig = {
   name: string;
@@ -166,3 +173,30 @@ export type MimeTypes =
   | "video/3gpp"
   | "video/3gpp2"
   | "application/x-7z-compressed";
+
+export interface ParameterMetadata {
+  name: string;
+  type: "string" | "number" | "object" | "array";
+  description?: string;
+  optional?: boolean;
+}
+
+export interface FunctionConfig {
+  name?: string;
+  description?: string;
+  version?: number;
+  parameters?: ParameterMetadata[];
+  optionals?: string[];
+}
+
+export interface FunctionMetadata {
+  name: string;
+  description: string;
+  version?: number;
+  parameters: ParameterMetadata[];
+  optionals?: string[];
+  [key: string]: any;
+}
+
+export type CallToolParams = z.infer<typeof CallToolRequestSchema>["params"];
+export type CallToolMeta = NonNullable<CallToolParams["_meta"]>;

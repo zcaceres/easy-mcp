@@ -1,6 +1,6 @@
-import EasyMCP from "./lib/EasyMCP";
+import BaseMCP from "./lib/EasyMCP";
 
-const mcp = EasyMCP.create("test-mcp", {
+const mcp = BaseMCP.create("test-mcp", {
   version: "0.1.0",
 });
 
@@ -19,10 +19,19 @@ mcp.template({
   name: "An optional name", // Optional
   description: "An optional description", // Optional
   mimeType: "text/plain", // Optional
-  fn: async ({ filename, id }) => {
-    return `file://${filename}/${id}.txt`;
-  },
+  fn: addMetadata(
+    async ({ filename, id }: { filename: string; id: string }) => {
+      return `file://${filename}/${id}.txt`;
+    },
+  ),
 });
+
+function addMetadata(fn: Function) {
+  return function (...args: any[]) {
+    // Here you can add logic to parse the function and add metadata
+    return fn(...args);
+  };
+}
 
 mcp.tool({
   name: "hello world",
@@ -42,7 +51,6 @@ mcp.tool({
 mcp.prompt({
   name: "Hello World Prompt",
   description: "A prompt that says hello",
-  // TODO: find a way to infer the args from the parameters input to fn below, so we don't have to explicitly define them here.
   args: [
     {
       name: "name",

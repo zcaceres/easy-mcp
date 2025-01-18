@@ -34,7 +34,6 @@ class MCPPrompt {
       args: [
         {
           name: faker.lorem.word(),
-          type: faker.helpers.arrayElement(["string", "number", "boolean"]),
           description: faker.lorem.sentence(),
           required: faker.datatype.boolean(),
         },
