@@ -1,10 +1,8 @@
 ## TODO
 
 NEXT:
-- Logging
-  - configurable logger class w/log levels
-  - serializes to client
-  - on a context object
+- LOGO
+- GH workflows for releases and test running
 - For the experimental API: add error to make sure people don't pass objects as args to the functions that are decorated.
 - Prompt in theory accepts inputs but, the TS types don't suggest it can and it doesn't seem to share them.
 - Conversion and formatting of messages and responses
@@ -17,12 +15,7 @@ NEXT:
     TextResourceContents
     ResourceContents
     - [] Image conversion
-- Logging and configuration of Logging (see LoggingMessageNotification)
 - sub / unsub
-- [] Context Object
-   - [] Logging via debug(), info(), warning(), and error()
-   - [] Resource access through read_resource()
-   - [] Request metadata via request_id and client_id
 
 ### Example Servers
 - [] Weather
@@ -36,7 +29,5 @@ NEXT:
 
 ### Polish
 - [] dependencies
-- [] Can we infer the inputs schema definition just from the type signature of the fn that's passed in when defining a tool?
-
-- [] Samplings (delay)
+- [] Samplings (later)
 - [] SSE

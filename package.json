@@ -1,16 +1,46 @@
 {
   "name": "easy-mcp",
   "module": "index.ts",
+  "version": "0.0.0-development",
   "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "description": "The simplest way to create Model Context Protocol (MCP) servers in TypeScript.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zcaceres/easy-mcp.git"
+  },
+  "homepage": "https://github.com/zcaceres/easy-mcp#readme",
+  "author": "Zach Caceres (zach.dev)",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "typescript",
+    "server"
+  ],
   "scripts": {
     "start": "bun run index.ts",
     "start:decorators": "bun run example-experimental-decorators.ts",
-    "dev": "bun --watch index.ts"
+    "dev": "bun --watch index.ts",
+    "build": "bun build ./index.ts --outdir ./dist && tsc",
+    "test": "bun test",
+    "semantic-release": "semantic-release",
+    "prepublishOnly": "bun run build"
   },
   "devDependencies": {
     "@anatine/zod-mock": "^3.13.4",
     "@faker-js/faker": "^9.3.0",
-    "@types/bun": "latest"
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@types/bun": "latest",
+    "semantic-release": "^24.2.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

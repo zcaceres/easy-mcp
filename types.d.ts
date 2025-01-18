@@ -32,7 +32,11 @@ export type ToolDefinition = {
   };
 };
 
-export type FulfillmentFn = (...args: any, context: Context) => Promise<any>;
+export type FulfillmentFn = (...args: any) => Promise<any>;
+export type ToolCallFulfillmentFn = (
+  ...args: any,
+  context: Context,
+) => Promise<any>;
 
 export type ToolConfig = {
   name: string;

@@ -14,16 +14,25 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
-    "noEmit": true,
 
     // Best practices
     "strict": true,
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
 
-    // Some stricter flags (disabled by default)
+    // Some stricter flags (adjust as needed)
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
-  }
+    "noPropertyAccessFromIndexSignature": false,
+
+    // Additional options for .d.ts generation
+    "declaration": true,
+    "declarationDir": "./dist",
+    "outDir": "./dist",
+    "rootDir": "./",
+    "noEmit": false,
+    "emitDeclarationOnly": true
+  },
+  "include": ["index.ts", "lib/**/*.ts"],
+  "exclude": ["node_modules", "**/*.test.ts", "dist"]
 }

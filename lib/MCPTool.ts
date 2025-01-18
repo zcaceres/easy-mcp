@@ -1,10 +1,15 @@
 import { faker } from "@faker-js/faker";
-import type { ToolArg, ToolConfig, ToolDefinition } from "../types";
+import type {
+  ToolArg,
+  ToolCallFulfillmentFn,
+  ToolConfig,
+  ToolDefinition,
+} from "../types";
 import type { Context } from "./Context";
 
 class MCPTool {
   private _definition: ToolDefinition;
-  private fn: (...args: any[]) => Promise<any>;
+  private fn: ToolCallFulfillmentFn;
 
   private constructor({ name, description, inputs = [], fn }: ToolConfig) {
     this._definition = {
