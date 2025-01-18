@@ -33,10 +33,7 @@ import {
   type ReadResourceResult,
   type Root,
   type ServerCapabilities,
-  LoggingMessageNotificationSchema,
-  LoggingLevelSchema,
   type LoggingLevel,
-  type ProgressToken,
 } from "@modelcontextprotocol/sdk/types.js";
 import ToolManager from "./ToolManager";
 import PromptManager from "./PromptManager";

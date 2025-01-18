@@ -47,7 +47,10 @@ export class Context {
     if ("text" in content) {
       return content.text as string;
     } else if ("blob" in content) {
-      // Convert base64 to Uint8Array
+      // This line converts a base64-encoded string to a Uint8Array
+      // 1. atob(content.blob) decodes the base64 string to a regular string
+      // 2. Uint8Array.from() creates a new Uint8Array from this string
+      // 3. The mapping function (c) => c.charCodeAt(0) converts each character to its UTF-16 code unit
       return Uint8Array.from(atob(content.blob), (c) => c.charCodeAt(0));
     }
     throw new Error(`Unsupported resource content type for ${uri}`);
