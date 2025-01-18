@@ -22,7 +22,7 @@ Easy MCP allows you to define the bare minimum of what you need to get started. 
 
 ## Installation
 
-To install easy-mcp, run the following command in your project directory:
+To install EasyMCP, run the following command in your project directory:
 
 ```bash
 bun install
@@ -407,4 +407,4 @@ This project is licensed under the MIT License.
 
 ## Credits
 
-Easy MCP was created by Zach Caceres but inspired by [FastMCP by kjlowin](https://github.com/jlowin/fastmcp), a library for Python MCP servers.
+EasyMCP was created by Zach Caceres but inspired by [FastMCP by kjlowin](https://github.com/jlowin/fastmcp), a library for Python MCP servers.
