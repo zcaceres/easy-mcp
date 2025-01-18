@@ -1,6 +1,6 @@
 # easy-mcp
 
-[easyMCP logo](./assets/logo.webp)
+![easyMCP logo](./assets/logo.webp)
 
 > EasyMCP is usable but in beta. Please report any issues you encounter.
 
