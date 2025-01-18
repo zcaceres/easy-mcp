@@ -30,7 +30,7 @@
     "start:decorators": "bun run example-experimental-decorators.ts",
     "dev": "bun --watch index.ts",
     "build": "bun build ./index.ts --outdir ./dist && tsc",
-    "test": "bun test lib",
+    "test": "bun test --tsconfig-override tsconfig.json lib",
     "semantic-release": "semantic-release",
     "prepublishOnly": "bun run build"
   },
@@ -40,6 +40,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@types/bun": "latest",
+    "@types/lodash.camelcase": "^4.3.9",
     "semantic-release": "^24.2.1"
   },
   "peerDependencies": {
@@ -47,6 +48,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
+    "lodash.camelcase": "^4.3.0",
     "path-to-regexp": "^8.2.0",
     "reflect-metadata": "^0.2.2"
   }

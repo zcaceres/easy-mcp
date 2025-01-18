@@ -1,12 +1,11 @@
-import type { Context } from "./lib/Context";
-import EasyMCP from "./lib/EasyMCP";
-import { Prompt } from "./lib/experimental/decorators/Prompt";
-import { Resource } from "./lib/experimental/decorators/Resource";
-import { Root } from "./lib/experimental/decorators/Root";
-import { Tool } from "./lib/experimental/decorators/Tool";
+import type { Context } from "../lib/Context";
+import EasyMCP from "../lib/EasyMCP";
+import { Prompt } from "../lib/experimental/decorators/Prompt";
+import { Resource } from "../lib/experimental/decorators/Resource";
+import { Root } from "../lib/experimental/decorators/Root";
+import { Tool } from "../lib/experimental/decorators/Tool";
 
-@Root("/my-sample-dir/photos")
-// Optionally include a name for the Root
+@Root("/my-sample-dir/photos") // Name will be inferred from the URI
 @Root("/my-root-dir", { name: "My laptop's root directory" })
 class ZachsMCP extends EasyMCP {
   /**

@@ -1,3 +1,5 @@
+import camelCase from "lodash.camelcase";
+
 /**
  * All other decorators wrap instance methods. This decorator wraps the class itself because Roots do not have logic or function params when they're fulfilled.
  */
@@ -16,7 +18,7 @@ export function Root(
 
     (constructor as any).rootConfigs.push({
       uri,
-      name: config.name || constructor.name,
+      name: config.name || camelCase(uri),
     });
 
     return constructor;
