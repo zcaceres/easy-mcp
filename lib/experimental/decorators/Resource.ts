@@ -9,11 +9,14 @@ export function Resource(
   uriOrUriTemplate: string,
   config: Partial<ResourceDefinition> = {},
 ) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor,
-  ) {
+  return function (...args: any[]) {
+    const [target, propertyKey, descriptor] = args;
+
+    // If it's not a method decorator, return
+    if (args.length < 2) {
+      return;
+    }
+
     const originalMethod = descriptor.value;
 
     const metadata = extractFunctionMetadata(target, propertyKey, config);

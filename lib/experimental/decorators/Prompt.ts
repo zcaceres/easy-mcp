@@ -1,12 +1,17 @@
 import type { PromptConfig, PromptDefinition } from "../../../types";
 import { extractFunctionMetadata, metadataKey } from "../MagicConfig";
 
-export function Prompt(config?: PromptDefinition) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor,
-  ) {
+export function Prompt(
+  config?: PromptDefinition,
+): PropertyDecorator & MethodDecorator {
+  return function (...args: any[]) {
+    const [target, propertyKey, descriptor] = args;
+
+    // If it's not a method decorator, return
+    if (args.length < 2) {
+      return;
+    }
+
     const originalMethod = descriptor.value;
 
     const metadata = extractFunctionMetadata(target, propertyKey, config || {});
