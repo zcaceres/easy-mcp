@@ -10,12 +10,10 @@ Easy MCP allows you to define the bare minimum of what you need to get started. 
 
 ## Features
 
-- **Simplified API**: EasyMCP provides a high-level, intuitive API for defining MCP servers. Define Tools, Prompts, Resources, Resource Templates, and Roots with simple calls. Every possible parameter that could be optional is optional and hidden unless you need it.
-- **Decorator Support**: Use TypeScript decorators to easily define tools, resources, and prompts.
-- **Context Object**: Access MCP capabilities like logging and progress reporting through a context object in your tools.
-- **Type Safety**: Leverage TypeScript's type system for better development experience and fewer runtime errors.
-
+- **Simple Express-like API**: EasyMCP provides a high-level, intuitive API. Define Tools, Prompts, Resources, Resource Templates, and Roots with calls similar to defining endpoints in ExpressJS. Every possible parameter that could be optional is optional and hidden unless you need it.
 - **Experimental Decorators API**: Automagically infers tool, prompt, and resource arguments. No input schema definition required!
+- **Context Object**: Access MCP capabilities like logging and progress reporting through a context object in your tools.
+- **Great Type Safety**: Better DX and fewer runtime errors.
 
 ## Beta Limitations
 
@@ -27,16 +25,12 @@ Easy MCP allows you to define the bare minimum of what you need to get started. 
 To install easy-mcp, run the following command in your project directory:
 
 ```bash
-pnpm install easy-mcp
-```
-
-Or if you're using bun:
-
-```bash
-bun add easy-mcp
+bun install
 ```
 
 ## Quick Start with (Experimental) Decorators API
+
+Also see `examples/express-decorators.ts` or run `bun start:decorators`
 
 EasyMCP's decorator API is dead simple and infers types and input configuration automatically.
 
@@ -69,6 +63,8 @@ const mcp = new MyMCP({ version: "1.0.0" });
 ```
 
 ## Complex Example with Decorators API
+
+See `examples/express-express.ts` or run `bun start:express`
 
 ```typescript
 import EasyMCP from "./lib/EasyMCP";
@@ -211,6 +207,8 @@ console.log(mcp.name, "is now serving!");
 ```
 
 ## Quick Start with Express-like API
+
+Also see `examples/example-minimal.ts` or run `bun start:express`
 
 This API is more verbose and less magical, but it's more stable and tested.
 
@@ -395,7 +393,7 @@ class MyMCP extends EasyMCP {
 }
 ```
 
-When using decorators, EasyMCP will automatically infer types and create appropriate configurations for your tools, resources, prompts, and roots. This can significantly reduce boilerplate code and make your MCP server definition more concise.
+> When using decorators, EasyMCP will automatically infer types and create appropriate configurations for your tools, resources, prompts, and roots. This can significantly reduce boilerplate code and make your MCP server definition more concise.
 
 But... the decorator API is experimental and may have bugs or unexpected changes
 
