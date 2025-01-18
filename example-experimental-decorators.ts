@@ -1,3 +1,4 @@
+import type { Context } from "./lib/Context";
 import EasyMCP from "./lib/EasyMCP";
 import { Prompt } from "./lib/experimental/decorators/Prompt";
 import { Resource } from "./lib/experimental/decorators/Resource";
@@ -56,6 +57,29 @@ class ZachsMCP extends EasyMCP {
   })
   complexTool(date: string, season: string, year?: number) {
     return `complexTool called: date ${date}, season ${season}, year ${year}`;
+  }
+
+  @Tool({
+    description: "A tool that uses context",
+  })
+  async processData(dataSource: string, context: Context) {
+    context.info(`Starting to process data from ${dataSource}`);
+
+    try {
+      const data = await context.readResource(dataSource);
+      context.debug("Data loaded");
+
+      for (let i = 0; i < 5; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await context.reportProgress(i * 20, 100);
+        context.info(`Processing step ${i + 1} complete`);
+      }
+
+      return `Processed ${data.length} bytes of data from ${dataSource}`;
+    } catch (error) {
+      context.error(`Error processing data: ${(error as Error).message}`);
+      throw error;
+    }
   }
 
   /**

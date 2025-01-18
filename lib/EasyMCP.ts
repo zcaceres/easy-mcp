@@ -1,5 +1,6 @@
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import type {
+  CallToolMeta,
   PromptConfig,
   ResourceConfig,
   ResourceTemplateConfig,
@@ -35,9 +36,11 @@ import {
   LoggingMessageNotificationSchema,
   LoggingLevelSchema,
   type LoggingLevel,
+  type ProgressToken,
 } from "@modelcontextprotocol/sdk/types.js";
 import ToolManager from "./ToolManager";
 import PromptManager from "./PromptManager";
+import { Context } from "./Context";
 import RootsManager from "./RootsManager";
 import { metadataKey } from "./experimental/MagicConfig";
 import LogFormatter from "./LogFormatter";
@@ -151,6 +154,13 @@ class BaseMCP {
     return this.rootsManager.add(config);
   }
 
+  async createContext(meta: CallToolMeta): Promise<Context> {
+    if (!this.server) {
+      throw new Error("Server not initialized. Call serve() first.");
+    }
+    return new Context(this.server, this.resourceManager, meta);
+  }
+
   private async registerCoreHandlers() {
     if (!this.server) {
       throw new Error("Server not initialized. Call serve() first.");
@@ -212,10 +222,13 @@ class BaseMCP {
 
       this.server.setRequestHandler(
         CallToolRequestSchema,
-        async ({ params }): Promise<CallToolResult> => {
+        async (request): Promise<CallToolResult> => {
+          const progressToken = request.params._meta?.progressToken;
+          const context = await this.createContext(request.params._meta);
           const result = await this.toolManager.call(
-            params.name,
-            params.arguments,
+            request.params.name,
+            request.params.arguments,
+            context,
           );
           return {
             content: [
@@ -309,6 +322,7 @@ export default class EasyMCP extends BaseMCP {
     }
 
     const childMethods = Object.getOwnPropertyNames(Object.getPrototypeOf(this))
+      // @ts-expect-error Due to decorator behavior we're doing some JS prototype hacking that triggers a TS error here
       .filter((method) => typeof this[method] === "function")
       .filter(
         (method) =>

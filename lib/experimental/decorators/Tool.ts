@@ -1,4 +1,5 @@
 import type { FunctionConfig, ToolConfig } from "../../../types";
+import type { Context } from "../../Context";
 import { extractFunctionMetadata, metadataKey } from "../MagicConfig";
 
 export function Tool(config?: FunctionConfig) {
@@ -34,11 +35,11 @@ export function Tool(config?: FunctionConfig) {
         required: !param.optional,
       })),
       // MCP passes in an arguments OBJECT to the function, so we need to convert that back to the parameters the function expects.
-      fn: (argsObject) => {
+      fn: (argsObject: any, context?: Context) => {
         if (argsObject) {
-          return originalMethod(...Object.values(argsObject));
+          return originalMethod(...Object.values(argsObject), context);
         }
-        return originalMethod();
+        return originalMethod(context);
       },
     };
 

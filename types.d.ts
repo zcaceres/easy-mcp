@@ -32,7 +32,7 @@ export type ToolDefinition = {
   };
 };
 
-export type FulfillmentFn = (...args: any[]) => Promise<any>;
+export type FulfillmentFn = (...args: any, context: Context) => Promise<any>;
 
 export type ToolConfig = {
   name: string;
@@ -193,3 +193,6 @@ export interface FunctionMetadata {
   optionals?: string[];
   [key: string]: any;
 }
+
+export type CallToolParams = z.infer<typeof CallToolRequestSchema>["params"];
+export type CallToolMeta = NonNullable<CallToolParams["_meta"]>;
