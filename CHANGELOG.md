@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/zcaceres/easy-mcp/compare/v1.0.0...v1.0.1) (2025-01-18)
+
+
+### Bug Fixes
+
+* image not link in README ([14b8dbb](https://github.com/zcaceres/easy-mcp/commit/14b8dbb96136365314f5df9fb36d260ebf8d1b2b))
+
 # 1.0.0 (2025-01-18)
 
 
