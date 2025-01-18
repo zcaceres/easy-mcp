@@ -1,10 +1,8 @@
 ## TODO
 
 NEXT:
-- LOGO
-- GH workflows for releases and test running
 - For the experimental API: add error to make sure people don't pass objects as args to the functions that are decorated.
-- Prompt in theory accepts inputs but, the TS types don't suggest it can and it doesn't seem to share them.
+- Prompt in theory accepts inputs but, the TS types suggest it can't... and it doesn't seem to share them.
 - Conversion and formatting of messages and responses
   - What are the supported data types
     Textcontent
@@ -16,18 +14,14 @@ NEXT:
     ResourceContents
     - [] Image conversion
 - sub / unsub
+- SSE
+- [] Development Mode (verbose logging etc)
 
-### Example Servers
+### Better Example Servers
 - [] Weather
 - [] Time
 - [] Markdownify / Fetch
 
 ### Docs
-- [] Development Mode
 - [] Claude Desktop Integration directions
 - [] Instant install to Claude by script
-
-### Polish
-- [] dependencies
-- [] Samplings (later)
-- [] SSE
