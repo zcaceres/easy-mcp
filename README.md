@@ -1,5 +1,7 @@
 # easy-mcp
 
+[easyMCP logo](./assets/logo.webp)
+
 > EasyMCP is usable but in beta. Please report any issues you encounter.
 
 EasyMCP is the simplest way to create Model Context Protocol (MCP) servers in TypeScript.
