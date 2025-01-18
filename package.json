@@ -27,7 +27,8 @@
   ],
   "scripts": {
     "start": "bun run index.ts",
-    "start:decorators": "bun run example-experimental-decorators.ts",
+    "start:decorators": "bun run examples/example-experimental-decorators.ts",
+    "start:express": "bun run examples/example-express.ts",
     "dev": "bun --watch index.ts",
     "build": "bun build ./index.ts --outdir ./dist && tsc",
     "test": "bun test --tsconfig-override tsconfig.json lib",

@@ -1,5 +1,5 @@
-import type { Context } from "./lib/Context";
-import BaseMCP from "./lib/EasyMCP";
+import type { Context } from "../lib/Context";
+import BaseMCP from "../lib/EasyMCP";
 
 const mcp = BaseMCP.create("test-mcp", {
   version: "0.1.0",
@@ -97,3 +97,5 @@ mcp.root({
 });
 
 await mcp.serve().catch(console.error);
+console.log(mcp.name, "is now serving!");
+console.log("It has capabilities:", mcp.listCapabilities());
