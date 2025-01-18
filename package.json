@@ -30,7 +30,7 @@
     "start:decorators": "bun run example-experimental-decorators.ts",
     "dev": "bun --watch index.ts",
     "build": "bun build ./index.ts --outdir ./dist && tsc",
-    "test": "bun test",
+    "test": "bun test lib",
     "semantic-release": "semantic-release",
     "prepublishOnly": "bun run build"
   },

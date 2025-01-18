@@ -1,7 +1,5 @@
 import { test, expect, beforeEach, describe, mock } from "bun:test";
 import EasyMCP from "./EasyMCP";
-import { Context } from "./Context";
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 
 describe("EasyMCP", () => {
   let easyMCP: EasyMCP;

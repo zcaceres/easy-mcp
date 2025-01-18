@@ -101,7 +101,6 @@ class BaseMCP {
 
   async serve() {
     try {
-      console.log(`Starting server ${this.name} with options:`, this.opts);
       const transport = new StdioServerTransport();
       this.server = new Server(
         {
@@ -112,7 +111,6 @@ class BaseMCP {
       );
       await this.registerCoreHandlers();
       await this.server.connect(transport);
-      console.log("Server started");
     } catch (e) {
       console.error("Error starting server", e);
       process.exit(1);
