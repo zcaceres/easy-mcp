@@ -29,6 +29,8 @@
     "start": "bun run index.ts",
     "start:decorators": "bun run examples/example-experimental-decorators.ts",
     "start:express": "bun run examples/example-express.ts",
+    "inspect:decorators": "bunx @modelcontextprotocol/inspector bun run start:decorators",
+    "inspect:express": "bunx @modelcontextprotocol/inspector bun run start:express",
     "dev": "bun --watch index.ts",
     "build": "bun build ./index.ts --outdir ./dist && tsc",
     "test": "bun test --tsconfig-override tsconfig.json lib",

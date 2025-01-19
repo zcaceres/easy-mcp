@@ -276,7 +276,7 @@ class BaseMCP {
           return { roots: this.rootsManager.list() };
         },
       );
-      console.log("Registered ListRoots endpoint");
+      // console.log("Registered ListRoots endpoint");
     }
   }
 
