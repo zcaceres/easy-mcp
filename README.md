@@ -21,6 +21,7 @@ Easy MCP allows you to define the bare minimum of what you need to get started. 
 
 - No support for MCP sampling, yet
 - No support for SSE, yet
+- Prompts technically accept inputs, but the Typescript SDK suggests they can't. So this functionality feels unfinished.
 
 ## Installation
 
@@ -409,4 +410,4 @@ This project is licensed under the MIT License.
 
 ## Credits
 
-EasyMCP was created by Zach Caceres but inspired by [FastMCP by kjlowin](https://github.com/jlowin/fastmcp), a library for Python MCP servers.
+EasyMCP was created by [Zach Caceres](https://www.zach.dev) but inspired by [FastMCP by kjlowin](https://github.com/jlowin/fastmcp), a library for Python MCP servers.
