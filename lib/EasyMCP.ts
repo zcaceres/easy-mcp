@@ -40,7 +40,7 @@ import PromptManager from "./PromptManager";
 import { Context } from "./Context";
 import RootsManager from "./RootsManager";
 import { metadataKey } from "./experimental/MagicConfig";
-import LogFormatter from "./LogFormatter";
+import LogFormatter, { LOG_LEVELS } from "./LogFormatter";
 
 class BaseMCP {
   name: string;
@@ -82,7 +82,7 @@ class BaseMCP {
 
     // Always enable logging, which is available on the Context object.
     capabilities.logging = {
-      levels: ["debug", "info", "warning", "error"],
+      levels: LOG_LEVELS,
     };
 
     if (this.toolManager.list().length) {

@@ -64,27 +64,31 @@ export class Context {
     return this._meta;
   }
 
-  log(level: LoggingLevel, message: string, loggerName?: string): void {
-    this.server.sendLoggingMessage({
+  log(
+    level: LoggingLevel,
+    message: string,
+    loggerName?: string,
+  ): Promise<void> {
+    return this.server.sendLoggingMessage({
       level,
       data: message,
       logger: loggerName,
     });
   }
 
-  debug(message: string, loggerName?: string): void {
-    this.log("debug", message, loggerName);
+  debug(message: string, loggerName?: string): Promise<void> {
+    return this.log("debug", message, loggerName);
   }
 
-  info(message: string, loggerName?: string): void {
-    this.log("info", message, loggerName);
+  info(message: string, loggerName?: string): Promise<void> {
+    return this.log("info", message, loggerName);
   }
 
-  warning(message: string, loggerName?: string): void {
-    this.log("warning", message, loggerName);
+  warning(message: string, loggerName?: string): Promise<void> {
+    return this.log("warning", message, loggerName);
   }
 
-  error(message: string, loggerName?: string): void {
-    this.log("error", message, loggerName);
+  error(message: string, loggerName?: string): Promise<void> {
+    return this.log("error", message, loggerName);
   }
 }

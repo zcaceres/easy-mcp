@@ -1,5 +1,6 @@
 import { test, expect, beforeEach, describe, mock } from "bun:test";
 import EasyMCP from "./EasyMCP";
+import { LOG_LEVELS } from "./LogFormatter";
 
 describe("EasyMCP", () => {
   let easyMCP: EasyMCP;
@@ -17,7 +18,7 @@ describe("EasyMCP", () => {
     expect(capabilities).toHaveProperty("capabilities");
     expect(capabilities.capabilities).toEqual({
       logging: {
-        levels: ["debug", "info", "warning", "error"],
+        levels: LOG_LEVELS,
       },
     });
 
@@ -46,7 +47,7 @@ describe("EasyMCP", () => {
       resources: {},
       tools: {},
       logging: {
-        levels: ["debug", "info", "warning", "error"],
+        levels: LOG_LEVELS,
       },
       prompts: {},
       roots: {},

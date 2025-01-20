@@ -21,6 +21,7 @@ Easy MCP allows you to define the bare minimum of what you need to get started. 
 
 - No support for MCP sampling, yet
 - No support for SSE, yet
+- No resource update notifications, yet
 - Prompts technically accept inputs, but the Typescript SDK suggests they can't. So this functionality feels unfinished.
 
 ## Installation
