@@ -91,8 +91,9 @@ class BaseMCP {
     if (this.rootsManager.list().length) {
       capabilities.roots = {};
     }
-    // samplings: {},
-    // experimental: {},
+
+    // TODO: samplings: {},
+    // TODO: experimental: {},
 
     return {
       capabilities,
@@ -161,7 +162,9 @@ class BaseMCP {
       throw new Error("Server not initialized. Call serve() first.");
     }
 
-    if (this.server.getClientCapabilities()?.resources) {
+    const capabilities = this.listCapabilities();
+
+    if (capabilities.resources.length) {
       // Resources
       this.server.setRequestHandler(
         ListResourcesRequestSchema,
@@ -169,7 +172,7 @@ class BaseMCP {
           return { resources: this.resourceManager.listResources() };
         },
       );
-      console.log("Registered ListResources endpoint");
+      // console.log("Registered ListResources endpoint");
 
       this.server.setRequestHandler(
         ListResourceTemplatesRequestSchema,
@@ -202,10 +205,10 @@ class BaseMCP {
           }
         },
       );
-      console.log("Registered ReadResource endpoint");
+      // console.log("Registered ReadResource endpoint");
     }
 
-    if (this.server.getClientCapabilities()?.tools) {
+    if (capabilities.tools.length) {
       // Tools
       this.server.setRequestHandler(
         ListToolsRequestSchema,
@@ -213,7 +216,7 @@ class BaseMCP {
           return { tools: this.toolManager.list() };
         },
       );
-      console.log("Registered ListTools endpoint");
+      // console.log("Registered ListTools endpoint");
 
       this.server.setRequestHandler(
         CallToolRequestSchema,
@@ -235,10 +238,10 @@ class BaseMCP {
           };
         },
       );
-      console.log("Registered CallTool endpoint");
+      // console.log("Registered CallTool endpoint");
     }
 
-    if (this.server.getClientCapabilities()?.prompts) {
+    if (capabilities.prompts.length) {
       // Prompts
       this.server.setRequestHandler(
         ListPromptsRequestSchema,
@@ -246,7 +249,7 @@ class BaseMCP {
           return { prompts: this.promptManager.list() };
         },
       );
-      console.log("Registered ListPrompts endpoint");
+      // console.log("Registered ListPrompts endpoint");
 
       this.server.setRequestHandler(
         GetPromptRequestSchema,
@@ -265,10 +268,10 @@ class BaseMCP {
           };
         },
       );
-      console.log("Registered GetPrompt endpoint");
+      // console.log("Registered GetPrompt endpoint");
     }
 
-    if (this.server.getClientCapabilities()?.roots) {
+    if (capabilities.roots.length) {
       // Roots
       this.server.setRequestHandler(
         ListRootsRequestSchema,
