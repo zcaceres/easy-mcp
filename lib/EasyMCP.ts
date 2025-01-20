@@ -80,6 +80,11 @@ class BaseMCP {
       capabilities.resources = {};
     }
 
+    // Always enable logging, which is available on the Context object.
+    capabilities.logging = {
+      levels: ["debug", "info", "warning", "error"],
+    };
+
     if (this.toolManager.list().length) {
       capabilities.tools = {};
     }

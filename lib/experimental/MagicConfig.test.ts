@@ -2,6 +2,7 @@ import { describe, expect, spyOn, test, beforeEach } from "bun:test";
 import { Tool } from "./decorators/Tool";
 import ToolManager from "../ToolManager";
 import EasyMCP from "../EasyMCP";
+import { Context } from "../Context";
 
 class TestMCP extends EasyMCP {
   @Tool({
@@ -11,19 +12,79 @@ class TestMCP extends EasyMCP {
   exampleFunc(name: string, active?: string, items?: string[], age?: number) {
     return `exampleFunc called: ${name}, ${active}, ${items}, ${age}`;
   }
+
+  @Tool({
+    description: "A function with a Context parameter",
+  })
+  toolWithContext(param1: string, context: Context) {
+    return `toolWithContext called: ${param1}, ${context ? "with context" : "no context"}`;
+  }
+
+  @Tool({
+    description: "A function without a Context parameter",
+  })
+  toolWithoutContext(param1: string, param2: number) {
+    return `toolWithoutContext called: ${param1}, ${param2}`;
+  }
 }
 
-describe("Tool Decorator", () => {
+describe("Tool Decorator with Context", () => {
   let mcp: TestMCP;
 
   beforeEach(() => {
     mcp = new TestMCP({ version: "1.0.0" });
   });
 
+  test("Tool with Context parameter is registered correctly", () => {
+    const tools = mcp.toolManager.list();
+    const toolWithContext = tools.find((t) => t.name === "toolWithContext");
+
+    expect(toolWithContext).toBeDefined();
+    expect(toolWithContext!.inputSchema.properties).toHaveProperty("param1");
+    expect(toolWithContext!.inputSchema.properties).not.toHaveProperty(
+      "context",
+    );
+    expect(toolWithContext!.inputSchema.required).toEqual(["param1"]);
+  });
+
+  test("Tool with Context parameter is registered correctly", () => {
+    const tools = mcp.toolManager.list();
+    const toolWithContext = tools.find((t) => t.name === "toolWithContext");
+
+    expect(toolWithContext).toBeDefined();
+    expect(toolWithContext!.inputSchema.properties).toHaveProperty("param1");
+    expect(toolWithContext!.inputSchema.properties).not.toHaveProperty(
+      "context",
+    );
+    expect(Object.keys(toolWithContext!.inputSchema.properties)).toHaveLength(
+      1,
+    );
+    expect(toolWithContext!.inputSchema.required).toEqual(["param1"]);
+  });
+
   test("Tool is added to ToolManager upon class instantiation", () => {
     const tools = mcp.toolManager.list();
-    expect(tools).toHaveLength(1);
+    expect(tools).toHaveLength(3);
     expect(tools[0].name).toBe("exampleFunc");
+  });
+
+  test("Calling tool with Context executes correctly", async () => {
+    const mockContext = {} as Context; // Create a mock Context object
+    const result = await mcp.toolManager.call(
+      "toolWithContext",
+      { param1: "test" },
+      mockContext,
+    );
+    expect(result).toBe("toolWithContext called: test, with context");
+  });
+
+  test("Calling tool without Context executes correctly", async () => {
+    const result = await mcp.toolManager.call(
+      "toolWithoutContext",
+      { param1: "test", param2: 42 },
+      {} as Context,
+    );
+    expect(result).toBe("toolWithoutContext called: test, 42");
   });
 
   test("Calling the method executes the original function", () => {

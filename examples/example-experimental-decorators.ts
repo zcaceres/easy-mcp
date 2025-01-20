@@ -134,5 +134,5 @@ const mcp = new ZachsMCP({
   version: "1.0.0",
   description: "A sample MCP with decorators",
 });
-console.log(mcp.name, "is now serving!");
-console.log("It has capabilities:", mcp.listCapabilities());
+// console.log(mcp.name, "is now serving!");
+// console.log("It has capabilities:", mcp.listCapabilities());

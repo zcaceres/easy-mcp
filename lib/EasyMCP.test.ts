@@ -15,7 +15,11 @@ describe("EasyMCP", () => {
   test("registerCapabilities() should return correct capabilities", () => {
     const capabilities = easyMCP.registerCapabilities();
     expect(capabilities).toHaveProperty("capabilities");
-    expect(capabilities.capabilities).toEqual({});
+    expect(capabilities.capabilities).toEqual({
+      logging: {
+        levels: ["debug", "info", "warning", "error"],
+      },
+    });
 
     // Add some resources, tools, prompts, and roots
     easyMCP.resource({
@@ -41,6 +45,9 @@ describe("EasyMCP", () => {
     expect(updatedCapabilities.capabilities).toEqual({
       resources: {},
       tools: {},
+      logging: {
+        levels: ["debug", "info", "warning", "error"],
+      },
       prompts: {},
       roots: {},
     });

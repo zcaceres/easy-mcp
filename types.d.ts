@@ -179,6 +179,7 @@ export interface ParameterMetadata {
   type: "string" | "number" | "object" | "array";
   description?: string;
   optional?: boolean;
+  isContext?: boolean;
 }
 
 export interface FunctionConfig {

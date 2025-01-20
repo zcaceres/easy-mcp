@@ -14,14 +14,6 @@ export default class LogFormatter {
         return this.warning(message);
       case "error":
         return this.error(message);
-      case "notice":
-        return this.notice(message);
-      case "critical":
-        return this.critical(message);
-      case "alert":
-        return this.alert(message);
-      case "emergency":
-        return this.emergency(message);
       default:
         console.warn(
           "Invalid log level passed to LogFormatter. This should never happen.",
@@ -33,22 +25,6 @@ export default class LogFormatter {
 
   private static debug(message: string) {
     return "debug: " + message;
-  }
-
-  private static notice(message: string) {
-    return "notice: " + message;
-  }
-
-  private static critical(message: string) {
-    return "critical: " + message;
-  }
-
-  private static alert(message: string) {
-    return "alert: " + message;
-  }
-
-  private static emergency(message: string) {
-    return "emergency: " + message;
   }
 
   private static info(message: string) {
